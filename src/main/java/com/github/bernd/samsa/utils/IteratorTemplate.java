@@ -1,5 +1,6 @@
 package com.github.bernd.samsa.utils;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -43,7 +44,7 @@ public abstract class IteratorTemplate<T> implements Iterator<T> {
         }
     }
 
-    protected abstract T makeNext();
+    protected abstract T makeNext() throws IOException;
 
     private boolean maybeComputeNext() {
         state = State.FAILED;

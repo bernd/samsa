@@ -1,6 +1,11 @@
 package com.github.bernd.samsa.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 public class Utils {
     /**
@@ -63,5 +68,17 @@ public class Utils {
         final Crc32 crc32 = new Crc32();
         crc32.update(bytes, offset, size);
         return crc32.getValue();
+    }
+
+    /**
+     * Open a channel for the given file
+     */
+    public static FileChannel openChannel(final File file, final boolean mutable) throws FileNotFoundException {
+        if (mutable) {
+            return new RandomAccessFile(file, "rw").getChannel();
+        } else {
+
+            return new FileInputStream(file).getChannel();
+        }
     }
 }

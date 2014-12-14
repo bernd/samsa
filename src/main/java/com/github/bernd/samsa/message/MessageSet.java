@@ -2,6 +2,7 @@ package com.github.bernd.samsa.message;
 
 import com.github.bernd.samsa.Message;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 import java.util.Iterator;
@@ -52,7 +53,7 @@ public abstract class MessageSet implements Iterable<MessageAndOffset> {
     /** Write the messages in this set to the given channel starting at the given offset byte.
      * Less than the complete amount may be written, but no more than maxSize can be. The number
      * of bytes written is returned */
-    public abstract int writeTo(GatheringByteChannel channel, long offset, int maxSize);
+    public abstract int writeTo(GatheringByteChannel channel, long offset, int maxSize) throws IOException;
 
     /**
      * Provides an iterator over the message/offset pairs in this set

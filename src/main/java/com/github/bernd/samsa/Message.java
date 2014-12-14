@@ -34,7 +34,7 @@ public class Message {
     private static final int VALUE_SIZE_LENGTH = 4;
 
     /** The amount of overhead bytes in a message */
-    private static final int MESSAGE_OVERHEAD = KEY_OFFSET + VALUE_SIZE_LENGTH;
+    public static final int MESSAGE_OVERHEAD = KEY_OFFSET + VALUE_SIZE_LENGTH;
 
     /**
      * The minimum valid size for the message header
