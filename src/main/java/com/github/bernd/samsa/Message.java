@@ -50,7 +50,7 @@ public class Message {
      * Specifies the mask for the compression code. 3 bits to hold the compression codec.
      * 0 is reserved to indicate no compression
      */
-    private static final int COMPRESSION_CODE_MASK = 0x07;
+    private static final int COMPRESSION_CODEC_MASK = 0x07;
 
     /**
      * Compression code for uncompressed messages
@@ -98,7 +98,7 @@ public class Message {
         byte attributes = 0;
 
         if (compressionCodec.getValue() > 0) {
-            attributes = (byte) (attributes | (COMPRESSION_CODE_MASK & compressionCodec.getValue()));
+            attributes = (byte) (attributes | (COMPRESSION_CODEC_MASK & compressionCodec.getValue()));
         }
         buffer.put(attributes);
 
@@ -146,7 +146,148 @@ public class Message {
         this(bytes, null, CompressionCodec.NONE);
     }
 
+    /**
+     * Compute the checksum of the message from the message contents
+     */
     private long computeChecksum() {
         return Utils.crc32(buffer.array(), buffer.arrayOffset() + MAGIC_OFFSET, buffer.limit() - MAGIC_OFFSET);
+    }
+
+    /**
+     * Retrieve the previously computed CRC for this message
+     */
+    public long checksum() {
+        return Utils.readUnsignedInt(buffer, CRC_OFFSET);
+    }
+
+    /**
+     * Returns true if the crc stored with the message matches the crc computed off the message contents
+     */
+    public boolean isValid() {
+        return checksum() == computeChecksum();
+    }
+
+    /**
+     * Throw an InvalidMessageException if isValid is false for this message
+     */
+    public void ensureValid() {
+        if(! isValid()) {
+            throw new InvalidMessageException("Message is corrupt (stored crc = " + checksum() + ", computed crc = " + computeChecksum() + ")");
+        }
+    }
+
+    /**
+     * The complete serialized size of this message in bytes (including crc, header attributes, etc)
+     */
+    public int size() {
+        return buffer.limit();
+    }
+
+    /**
+     * The length of the key in bytes
+     */
+    public int keySize() {
+        return buffer.getInt(KEY_SIZE_OFFSET);
+    }
+
+    /**
+     * Does the message have a key?
+     */
+    public boolean hasKey() {
+        return keySize() >= 0;
+    }
+
+    /**
+     * The position where the payload size is stored
+     */
+    private int payloadSizeOffset() {
+        return KEY_OFFSET + Math.max(0, keySize());
+    }
+
+    /**
+     * The length of the message value in bytes
+     */
+    public int payloadSize() {
+        return buffer.getInt(payloadSizeOffset());
+    }
+
+    /**
+     * Is the payload of this message null
+     */
+    public boolean isNull() {
+        return payloadSize() < 0;
+    }
+
+    /**
+     * The magic version of this message
+     */
+    public byte magic() {
+        return buffer.get(MAGIC_OFFSET);
+    }
+
+    /**
+     * The attributes stored with this message
+     */
+    public byte attributes() {
+        return buffer.get(ATTRIBUTES_OFFSET);
+    }
+
+    /**
+     * The compression codec used with this message
+     */
+    public CompressionCodec compressionCodec() {
+        return CompressionCodec.fromValue(buffer.get(ATTRIBUTES_OFFSET) & COMPRESSION_CODEC_MASK);
+    }
+
+    /**
+     * A ByteBuffer containing the content of the message
+     */
+    public ByteBuffer payload() {
+        return sliceDelimited(payloadSizeOffset());
+    }
+
+    /**
+     * A ByteBuffer containing the message key
+     */
+    public ByteBuffer key() {
+        return sliceDelimited(KEY_SIZE_OFFSET);
+    }
+
+    /**
+     * Read a size-delimited byte buffer starting at the given offset
+     */
+    private ByteBuffer sliceDelimited(final int start) {
+        final int size = buffer.getInt(start);
+
+        if (size < 0) {
+            return null;
+        } else {
+            ByteBuffer buf = buffer.duplicate();
+            buf.position(start + 4);
+            buf = buf.slice();
+            buf.limit(size);
+            buf.rewind();
+            return buf;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Message(magic = %d, attributes = %d, crc = %d, key = %s, payload = %s)",
+                magic(), attributes(), checksum(), key(), payload());
+    }
+
+    public ByteBuffer buffer() {
+        return buffer;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Message && buffer.equals(((Message) other).buffer());
+    }
+
+    @Override
+    public int hashCode() {
+        return buffer.hashCode();
     }
 }
