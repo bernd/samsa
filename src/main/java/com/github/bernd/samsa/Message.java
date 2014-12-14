@@ -39,7 +39,7 @@ public class Message {
     /**
      * The minimum valid size for the message header
      */
-    private static final int MIN_HEADER_SIZE = CRC_LENGTH + MAGIC_LENGTH + ATTRIBUTES_LENGTH + KEY_SIZE_LENGTH + VALUE_SIZE_LENGTH;
+    public static final int MIN_HEADER_SIZE = CRC_LENGTH + MAGIC_LENGTH + ATTRIBUTES_LENGTH + KEY_SIZE_LENGTH + VALUE_SIZE_LENGTH;
 
     /**
      * The current "magic" value
