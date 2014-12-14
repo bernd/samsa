@@ -40,13 +40,19 @@ public abstract class IteratorTemplate<T> implements Iterator<T> {
             case READY:
                 return true;
             default:
-                return maybeComputeNext();
+                try {
+                    return maybeComputeNext();
+                } catch (IOException e) {
+                    // TODO What to do with the exception here?
+                    e.printStackTrace();
+                    return false;
+                }
         }
     }
 
     protected abstract T makeNext() throws IOException;
 
-    private boolean maybeComputeNext() {
+    private boolean maybeComputeNext() throws IOException {
         state = State.FAILED;
         nextItem = makeNext();
         if (state == State.DONE) {
