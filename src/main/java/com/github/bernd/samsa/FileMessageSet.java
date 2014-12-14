@@ -72,6 +72,13 @@ public class FileMessageSet extends MessageSet {
     }
 
     /**
+     * Create a file message set with no slicing
+     */
+    public FileMessageSet(final File file) throws IOException {
+        this(file, Utils.openChannel(file, true));
+    }
+
+    /**
      * Create a file message set with mutable option
      */
     public FileMessageSet(final File file, final boolean mutable) throws IOException {
