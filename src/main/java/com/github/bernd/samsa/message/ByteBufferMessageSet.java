@@ -89,7 +89,7 @@ public class ByteBufferMessageSet extends MessageSet {
         }
     }
 
-    private static ByteBufferMessageSet decompress(final Message message) throws IOException {
+    public static ByteBufferMessageSet decompress(final Message message) throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final InputStream inputStream = new ByteBufferBackedInputStream(message.payload());
         byte[] intermediateBuffer = new byte[1024];

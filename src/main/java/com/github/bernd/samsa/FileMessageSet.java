@@ -187,7 +187,7 @@ public class FileMessageSet extends MessageSet {
      * If we encounter a message larger than this we throw an InvalidMessageException.
      * @return The iterator.
      */
-    private Iterator<MessageAndOffset> iterator(final int maxMessageSize) {
+    public Iterator<MessageAndOffset> iterator(final int maxMessageSize) {
         return new IteratorTemplate<MessageAndOffset>() {
             int location = start;
             ByteBuffer sizeOffsetBuffer = ByteBuffer.allocate(12);
@@ -311,5 +311,9 @@ public class FileMessageSet extends MessageSet {
         boolean success = file.renameTo(f);
         this.file = f;
         return success;
+    }
+
+    public File getFile() {
+        return file;
     }
 }

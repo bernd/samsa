@@ -1,22 +1,22 @@
 package com.github.bernd.samsa;
 
-import com.github.bernd.samsa.message.ByteBufferMessageSet;
+import com.github.bernd.samsa.message.MessageSet;
 
 public class FetchDataInfo {
     private final LogOffsetMetadata offsetMetadata;
-    private final ByteBufferMessageSet empty;
+    private final MessageSet messageSet;
 
     public FetchDataInfo(final LogOffsetMetadata offsetMetadata,
-                         final ByteBufferMessageSet empty) {
+                         final MessageSet messageSet) {
         this.offsetMetadata = offsetMetadata;
-        this.empty = empty;
+        this.messageSet = messageSet;
     }
 
     public LogOffsetMetadata getOffsetMetadata() {
         return offsetMetadata;
     }
 
-    public ByteBufferMessageSet getEmpty() {
-        return empty;
+    public MessageSet getMessageSet() {
+        return messageSet;
     }
 }

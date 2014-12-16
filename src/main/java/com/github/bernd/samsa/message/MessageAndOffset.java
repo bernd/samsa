@@ -18,4 +18,8 @@ public class MessageAndOffset {
     public Message getMessage() {
         return message;
     }
+
+    public long getOffset() {
+        return offset;
+    }
 }

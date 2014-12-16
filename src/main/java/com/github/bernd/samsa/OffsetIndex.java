@@ -442,4 +442,16 @@ public class OffsetIndex {
     private int roundToExactMultiple(final int number, final int factor) {
         return factor * (number / factor);
     }
+
+    public int getMaxIndexSize() {
+        return maxIndexSize;
+    }
+
+    public long getLastOffset() {
+        return lastOffset;
+    }
+
+    public File getFile() {
+        return file;
+    }
 }

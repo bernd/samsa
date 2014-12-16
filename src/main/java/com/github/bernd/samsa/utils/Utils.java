@@ -81,4 +81,14 @@ public class Utils {
             return new FileInputStream(file).getChannel();
         }
     }
+
+    /**
+     * Replace the given string suffix with the new suffix. If the string doesn't end with the given suffix throw an exception.
+     */
+    public static String replaceSuffix(final String s, final String oldSuffix, final String newSuffix) {
+        if (! s.endsWith(oldSuffix)) {
+            throw new IllegalArgumentException(String.format("Expected string to end with '%s' but string is '%s'", oldSuffix, s));
+        }
+        return s.substring(0, s.length() - oldSuffix.length()) + newSuffix;
+    }
 }
