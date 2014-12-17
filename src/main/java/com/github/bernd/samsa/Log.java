@@ -33,40 +33,53 @@ import java.util.function.Consumer;
 
 /**
  * An append-only log for storing messages.
- *
+ * <p/>
  * The log is a sequence of LogSegments, each with a base offset denoting the first message in the segment.
- *
+ * <p/>
  * New log segments are created according to a configurable policy that controls the size in bytes or time interval
  * for a given segment.
- *
+ * <p/>
  * This class is thread-safe!
  */
 public class Log {
     private static final Logger LOG = LoggerFactory.getLogger(Log.class);
 
-    /** a log file */
+    /**
+     * a log file
+     */
     public static String LOG_FILE_SUFFIX = ".log";
 
-    /** an index file */
+    /**
+     * an index file
+     */
     public static String INDEX_FILE_SUFFIX = ".index";
 
-    /** a file that is scheduled to be deleted */
+    /**
+     * a file that is scheduled to be deleted
+     */
     public static String DELETED_FILE_SUFFIX = ".deleted";
 
-    /** A temporary file that is being used for log cleaning */
+    /**
+     * A temporary file that is being used for log cleaning
+     */
     public static String CLEANED_FILE_SUFFIX = ".cleaned";
 
-    /** A temporary file used when swapping files into the log */
+    /**
+     * A temporary file used when swapping files into the log
+     */
     public static String SWAP_FILE_SUFFIX = ".swap";
 
     /** Clean shutdown file that indicates the broker was cleanly shutdown in 0.8. This is required to maintain backwards compatibility
      * with 0.8 and avoid unnecessary log recovery when upgrading from 0.8 to 0.8.1 */
-    /** TODO: Get rid of CleanShutdownFile in 0.8.2 */
+    /**
+     * TODO: Get rid of CleanShutdownFile in 0.8.2
+     */
     public static String CLEAN_SHUTDOWN_FILE = ".kafka_cleanshutdown";
 
     /**
      * Make log segment file name from offset bytes. All this does is pad out the offset number with zeros
      * so that ls sorts the files numerically.
+     *
      * @param offset The offset to use in the file name
      * @return The filename
      */
@@ -80,7 +93,8 @@ public class Log {
 
     /**
      * Construct a log file name in the given dir with the given base offset
-     * @param dir The directory in which the log will reside
+     *
+     * @param dir    The directory in which the log will reside
      * @param offset The base offset of the log file
      */
     public static File logFilename(final File dir, final long offset) {
@@ -89,7 +103,8 @@ public class Log {
 
     /**
      * Construct an index file name in the given dir using the given base offset
-     * @param dir The directory in which the log will reside
+     *
+     * @param dir    The directory in which the log will reside
      * @param offset The base offset of the log file
      */
     public static File indexFilename(final File dir, final long offset) {
@@ -101,7 +116,7 @@ public class Log {
      */
     public static TopicAndPartition parseTopicPartitionName(final String name) {
         final int index = name.lastIndexOf('-');
-        return new TopicAndPartition(name.substring(0,index), Integer.parseInt(name.substring(index + 1)));
+        return new TopicAndPartition(name.substring(0, index), Integer.parseInt(name.substring(index + 1)));
     }
 
     private final File dir;
@@ -125,10 +140,10 @@ public class Log {
     private final TopicAndPartition topicAndPartition;
 
     /**
-     * @param dir The directory in which log segments are created.
-     * @param config The log configuration settings
+     * @param dir           The directory in which log segments are created.
+     * @param config        The log configuration settings
      * @param recoveryPoint The offset at which to begin recovery--i.e. the first offset which has not been flushed to disk
-     * @param scheduler The thread pool scheduler used for background actions
+     * @param scheduler     The thread pool scheduler used for background actions
      */
     public Log(final File dir,
                final LogConfig config, // was marked as volatile
@@ -151,7 +166,9 @@ public class Log {
         this.tags.put("partition", String.valueOf(topicAndPartition.getPartition()));
     }
 
-    /** The name of this log */
+    /**
+     * The name of this log
+     */
     public String name() {
         return dir.getName();
     }
@@ -164,10 +181,10 @@ public class Log {
         // first do a pass through the files in the log directory and remove any temporary files
         // and complete any interrupted swap operations
         for (final File file : dir.listFiles()) {
-            if (! file.isFile()) {
+            if (!file.isFile()) {
                 continue;
             }
-            if (! file.canRead()) {
+            if (!file.canRead()) {
                 throw new IOException("Could not read file " + file);
             }
             final String filename = file.getName();
@@ -197,15 +214,15 @@ public class Log {
         }
 
         // now do a second pass and load all the .log and .index files
-        for(final File file : dir.listFiles()) {
-            if (! file.isFile()) {
+        for (final File file : dir.listFiles()) {
+            if (!file.isFile()) {
                 continue;
             }
             final String filename = file.getName();
             if (filename.endsWith(INDEX_FILE_SUFFIX)) {
                 // if it is an index file, make sure it has a corresponding .log file
                 final File logFile = new File(file.getAbsolutePath().replace(INDEX_FILE_SUFFIX, LOG_FILE_SUFFIX));
-                if (! logFile.exists()) {
+                if (!logFile.exists()) {
                     LOG.warn(String.format("Found an orphaned index file, %s, with no corresponding log file.", file.getAbsolutePath()));
                     file.delete();
                 }
@@ -218,7 +235,7 @@ public class Log {
                         config.getIndexInterval(),
                         config.getMaxIndexSize(),
                         config.getRandomSegmentJitter());
-                if (! hasIndex) {
+                if (!hasIndex) {
                     LOG.error(String.format("Could not find index file corresponding to log file %s, rebuilding index...", segment.getLog().getFile().getAbsolutePath()));
                     segment.recover(config.getMaxMessageSize());
                 }
@@ -258,12 +275,13 @@ public class Log {
 
         // okay we need to actually recovery this log
         final Iterator<LogSegment> unflushed = logSegments(recoveryPoint, Long.MAX_VALUE).iterator();
-        while(unflushed.hasNext()) {
+        while (unflushed.hasNext()) {
             final LogSegment curr = unflushed.next();
             LOG.info(String.format("Recovering unflushed segment %d in log %s.", curr.getBaseOffset(), name()));
             int truncatedBytes = 0;
             try {
-                truncatedBytes = curr.recover(config.getMaxMessageSize());;
+                truncatedBytes = curr.recover(config.getMaxMessageSize());
+                ;
             } catch (InvalidOffsetException e) {
                 long startOffset = curr.getBaseOffset();
                 LOG.warn("Found invalid offset during recovery for log " + dir.getName() + ". Deleting the corrupt segment and " +
@@ -307,7 +325,7 @@ public class Log {
      */
     public void close() {
         LOG.debug("Closing log " + name());
-        synchronized(lock) {
+        synchronized (lock) {
             for (LogSegment logSegment : logSegments()) {
                 logSegment.close();
             }
@@ -316,16 +334,14 @@ public class Log {
 
     /**
      * Append this message set to the active segment of the log, rolling over to a fresh segment if necessary.
-     *
+     * <p/>
      * This method will generally be responsible for assigning offsets to the messages,
      * however if the assignOffsets=false flag is passed we will only check that the existing offsets are valid.
      *
-     * @param messages The message set to append
+     * @param messages      The message set to append
      * @param assignOffsets Should the log assign offsets to this message set or blindly apply what it is given
-     *
-     * @throws SamsaStorageException If the append fails due to an I/O error.
-     *
      * @return Information about the appended messages including the first and last offset.
+     * @throws SamsaStorageException If the append fails due to an I/O error.
      */
     public LogAppendInfo append(final ByteBufferMessageSet messages, final boolean assignOffsets) throws MessageSizeTooLargeException, InvalidMessageSizeException, IOException, MessageSetSizeTooLargeException, SamsaStorageException {
         final LogAppendInfo appendInfo = analyzeAndValidateMessageSet(messages);
@@ -340,7 +356,7 @@ public class Log {
 
         try {
             // they are valid, insert them in the log
-            synchronized(lock) {
+            synchronized (lock) {
                 appendInfo.firstOffset = nextOffsetMetadata.getMessageOffset();
 
                 if (assignOffsets) {
@@ -410,7 +426,7 @@ public class Log {
      * <li> each message matches its CRC
      * <li> each message size is valid
      * </ol>
-     *
+     * <p/>
      * Also compute the following quantities:
      * <ol>
      * <li> First offset in the message set
@@ -469,8 +485,9 @@ public class Log {
 
     /**
      * Trim any invalid bytes from the end of this message set (if there are any)
+     *
      * @param messages The message set to trim
-     * @param info The general information of the message set
+     * @param info     The general information of the message set
      * @return A trimmed message set. This may be the same as what was passed in or it may not.
      */
     private ByteBufferMessageSet trimInvalidBytes(final ByteBufferMessageSet messages, final LogAppendInfo info) throws InvalidMessageSizeException {
@@ -479,7 +496,7 @@ public class Log {
             throw new InvalidMessageSizeException("Illegal length of message set " + messageSetValidBytes + " Message set cannot be appended to log. Possible causes are corrupted produce requests");
         }
         if (messageSetValidBytes == messages.sizeInBytes()) {
-           return messages;
+            return messages;
         } else {
             // trim invalid bytes
             final ByteBuffer validByteBuffer = messages.getBuffer().duplicate();
@@ -492,11 +509,10 @@ public class Log {
      * Read messages from the log
      *
      * @param startOffset The offset to begin reading at
-     * @param maxLength The maximum number of bytes to read
-     * @param maxOffset -The offset to read up to, exclusive. (i.e. the first offset NOT included in the resulting message set).
-     *
-     * @throws OffsetOutOfRangeException If startOffset is beyond the log end offset or before the base offset of the first segment.
+     * @param maxLength   The maximum number of bytes to read
+     * @param maxOffset   -The offset to read up to, exclusive. (i.e. the first offset NOT included in the resulting message set).
      * @return The fetch data information including fetch starting offset metadata and messages read
+     * @throws OffsetOutOfRangeException If startOffset is beyond the log end offset or before the base offset of the first segment.
      */
     public FetchDataInfo read(final long startOffset, final int maxLength, final Optional<Long> maxOffset) throws OffsetOutOfRangeException, IOException {
         LOG.trace(String.format("Reading %d bytes from offset %d in log %s of length %d bytes", maxLength, startOffset, name(), size()));
@@ -549,6 +565,7 @@ public class Log {
     /**
      * Delete any log segments matching the given predicate function,
      * starting with the oldest segment and moving forward until a segment doesn't match.
+     *
      * @param predicate A function that takes in a single log segment and returns true iff it is deletable
      * @return The number of segments deleted
      */
@@ -566,7 +583,7 @@ public class Log {
 
         int numToDelete = deletable.size();
         if (numToDelete > 0) {
-            synchronized(lock) {
+            synchronized (lock) {
                 // we must always have at least one segment, so if we are going to delete all the segments, create a new one first
                 if (segments.size() == numToDelete) {
                     roll();
@@ -607,7 +624,7 @@ public class Log {
     }
 
     /**
-     *  The offset of the next message that will be appended to the log
+     * The offset of the next message that will be appended to the log
      */
     public long logEndOffset() {
         return nextOffsetMetadata.getMessageOffset();
@@ -617,12 +634,12 @@ public class Log {
      * Roll the log over to a new empty log segment if necessary.
      *
      * @param messagesSize The messages set size in bytes
-     * logSegment will be rolled if one of the following conditions met
-     * <ol>
-     * <li> The logSegment is full
-     * <li> The maxTime has elapsed
-     * <li> The index is full
-     * </ol>
+     *                     logSegment will be rolled if one of the following conditions met
+     *                     <ol>
+     *                     <li> The logSegment is full
+     *                     <li> The maxTime has elapsed
+     *                     <li> The index is full
+     *                     </ol>
      * @return The currently active segment after (perhaps) rolling to a new segment
      */
     private LogSegment maybeRoll(final int messagesSize) throws IOException {
@@ -647,6 +664,7 @@ public class Log {
     /**
      * Roll the log over to a new active segment starting with the current logEndOffset.
      * This will trim the index to the exact size of the number of entries it currently contains.
+     *
      * @return The newly rolled segment
      */
     public LogSegment roll() throws IOException {
@@ -656,8 +674,8 @@ public class Log {
             final long newOffset = logEndOffset();
             final File logFile = logFilename(dir, newOffset);
             final File indexFile = indexFilename(dir, newOffset);
-            for(final File file : Lists.newArrayList(logFile, indexFile)) {
-                if (! file.exists()) {
+            for (final File file : Lists.newArrayList(logFile, indexFile)) {
+                if (!file.exists()) {
                     continue;
                 }
                 LOG.warn("Newly rolled segment file " + file.getName() + " already exists; deleting it first");
@@ -712,6 +730,7 @@ public class Log {
 
     /**
      * Flush log segments for all offsets up to offset-1
+     *
      * @param offset The offset to flush up to (non-inclusive); the new recovery point
      */
     public void flush(final long offset) throws IOException {
@@ -720,11 +739,11 @@ public class Log {
         }
         LOG.debug("Flushing log '" + name() + " up to offset " + offset + ", last flushed: " + lastFlushTime() + " current time: " +
                 System.currentTimeMillis() + " unflushed = " + unflushedMessages());
-        for(final LogSegment segment : logSegments(recoveryPoint, offset)) {
+        for (final LogSegment segment : logSegments(recoveryPoint, offset)) {
             segment.flush();
         }
         synchronized (lock) {
-            if(offset > recoveryPoint) {
+            if (offset > recoveryPoint) {
                 recoveryPoint = offset;
                 lastflushedTime.set(System.currentTimeMillis());
             }
@@ -747,6 +766,7 @@ public class Log {
 
     /**
      * Truncate this log so that it ends with the greatest offset < targetOffset.
+     *
      * @param targetOffset The offset to truncate to, an upper bound on all offsets in the log after truncation is complete.
      */
     private void truncateTo(final long targetOffset) throws IOException, SamsaStorageException {
@@ -758,7 +778,7 @@ public class Log {
             LOG.info(String.format("Truncating %s to %d has no effect as the largest offset in the log is %d.", name(), targetOffset, logEndOffset() - 1));
             return;
         }
-        synchronized(lock) {
+        synchronized (lock) {
             if (segments.firstEntry().getValue().getBaseOffset() > targetOffset) {
                 truncateFullyAndStartAt(targetOffset);
             } else {
@@ -775,12 +795,13 @@ public class Log {
     }
 
     /**
-     *  Delete all data in the log and start at the new offset
-     *  @param newOffset The new offset to start the log with
+     * Delete all data in the log and start at the new offset
+     *
+     * @param newOffset The new offset to start the log with
      */
     private void truncateFullyAndStartAt(final long newOffset) throws SamsaStorageException, IOException {
         LOG.debug("Truncate and start log '" + name() + "' to " + newOffset);
-        synchronized(lock) {
+        synchronized (lock) {
             final ArrayList<LogSegment> segmentsToDelete = Lists.newArrayList(logSegments());
             for (LogSegment segment : segmentsToDelete) {
                 deleteSegment(segment);
@@ -822,7 +843,7 @@ public class Log {
      * that includes up to "to-1" or the end of the log (if to > logEndOffset)
      */
     public Iterable<LogSegment> logSegments(final long from, final long to) {
-        synchronized(lock) {
+        synchronized (lock) {
             final Long floor = segments.floorKey(from);
             if (floor == null) {
                 return segments.headMap(to).values();
@@ -841,9 +862,9 @@ public class Log {
     /**
      * This method performs an asynchronous log segment delete by doing the following:
      * <ol>
-     *   <li>It removes the segment from the segment map so that it will no longer be used for reads.
-     *   <li>It renames the index and log files by appending .deleted to the respective file name
-     *   <li>It schedules an asynchronous delete operation to occur in the future
+     * <li>It removes the segment from the segment map so that it will no longer be used for reads.
+     * <li>It renames the index and log files by appending .deleted to the respective file name
+     * <li>It schedules an asynchronous delete operation to occur in the future
      * </ol>
      * This allows reads to happen concurrently without synchronization and without the possibility of physically
      * deleting a file while it is being read from.
@@ -852,7 +873,7 @@ public class Log {
      */
     private void deleteSegment(final LogSegment segment) throws SamsaStorageException {
         LOG.info(String.format("Scheduling log segment %d for log %s for deletion.", segment.getBaseOffset(), name()));
-        synchronized(lock) {
+        synchronized (lock) {
             segments.remove(segment.getBaseOffset());
             asyncDeleteSegment(segment);
         }
@@ -860,6 +881,7 @@ public class Log {
 
     /**
      * Perform an asynchronous delete on the given file if it exists (otherwise do nothing)
+     *
      * @throws SamsaStorageException if the file can't be renamed and still exists
      */
     private void asyncDeleteSegment(final LogSegment segment) throws SamsaStorageException {
@@ -881,11 +903,11 @@ public class Log {
      * Swap a new segment in place and delete one or more existing segments in a crash-safe manner. The old segments will
      * be asynchronously deleted.
      *
-     * @param newSegment The new log segment to add to the log
+     * @param newSegment  The new log segment to add to the log
      * @param oldSegments The old log segments to delete from the log
      */
     private void replaceSegments(final LogSegment newSegment, final List<LogSegment> oldSegments) throws SamsaStorageException {
-        synchronized(lock) {
+        synchronized (lock) {
             // need to do this in two phases to be crash safe AND do the delete asynchronously
             // if we crash in the middle of this we complete the swap in loadSegments()
             newSegment.changeFileSuffixes(Log.CLEANED_FILE_SUFFIX, Log.SWAP_FILE_SUFFIX);
@@ -907,6 +929,7 @@ public class Log {
 
     /**
      * Add the given segment to the segments in this log. If this segment replaces an existing segment, delete it.
+     *
      * @param segment The segment to add
      */
     public LogSegment addSegment(final LogSegment segment) {

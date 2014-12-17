@@ -16,10 +16,11 @@ public interface Scheduler {
 
     /**
      * Schedule a task
-     * @param name The name of this task
-     * @param delay The amount of time to wait before the first execution
+     *
+     * @param name   The name of this task
+     * @param delay  The amount of time to wait before the first execution
      * @param period The period with which to execute the task. If < 0 the task will execute only once.
-     * @param unit The unit for the preceding times.
+     * @param unit   The unit for the preceding times.
      */
     public void schedule(final String name,
                          final Runnable runnable,

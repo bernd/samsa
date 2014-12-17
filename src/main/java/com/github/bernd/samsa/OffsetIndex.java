@@ -16,25 +16,25 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * An index that maps offsets to physical file locations for a particular log segment. This index may be sparse:
  * that is it may not hold an entry for all messages in the log.
- *
+ * <p/>
  * The index is stored in a file that is pre-allocated to hold a fixed maximum number of 8-byte entries.
- *
+ * <p/>
  * The index supports lookups against a memory-map of this file. These lookups are done using a simple binary search variant
  * to locate the offset/location pair for the greatest offset less than or equal to the target offset.
- *
+ * <p/>
  * Index files can be opened in two ways: either as an empty, mutable index that allows appends or
  * an immutable read-only index file that has previously been populated. The makeReadOnly method will turn a mutable file into an
  * immutable one and truncate off any extra bytes. This is done when the index file is rolled over.
- *
+ * <p/>
  * No attempt is made to checksum the contents of this file, in the event of a crash it is rebuilt.
- *
+ * <p/>
  * The file format is a series of entries. The physical format is a 4 byte "relative" offset and a 4 byte file location for the
  * message with that offset. The offset stored is relative to the base offset of the index file. So, for example,
  * if the base offset was 50, then the offset 55 would be stored as 5. Using relative offsets in this way let's us use
  * only 4 bytes for the offset.
- *
+ * <p/>
  * The frequency of entries is up to the user of this class.
- *
+ * <p/>
  * All external APIs translate from relative offsets to full offsets, so users of this class do not interact with the internal
  * storage format.
  */
@@ -131,7 +131,6 @@ public class OffsetIndex {
      * and return a pair holding this offset and it's corresponding physical file position.
      *
      * @param targetOffset The offset to look up.
-     *
      * @return The offset found and the corresponding file position for this offset.
      * If the target offset is smaller than the least entry in the index (or the index is empty),
      * the pair (baseOffset, 0) is returned.
@@ -159,9 +158,8 @@ public class OffsetIndex {
      * Find the slot in which the largest offset less than or equal to the given
      * target offset is stored.
      *
-     * @param idx The index buffer
+     * @param idx          The index buffer
      * @param targetOffset The offset to look for
-     *
      * @return The slot found or -1 if the least entry in the index is larger than the target offset or the index is empty
      */
     private int indexSlotFor(final ByteBuffer idx, final long targetOffset) {
@@ -182,7 +180,7 @@ public class OffsetIndex {
         int lo = 0;
         int hi = entries() - 1;
         while (lo < hi) {
-            int mid = (int) Math.ceil(hi/2.0 + lo/2.0);
+            int mid = (int) Math.ceil(hi / 2.0 + lo / 2.0);
             int found = relativeOffset(idx, mid);
             if (found == relOffset) {
                 return mid;
@@ -197,7 +195,7 @@ public class OffsetIndex {
 
     /* return the nth offset relative to the base offset */
     private int relativeOffset(final ByteBuffer buffer, final int n) {
-      return buffer.getInt(n * 8);
+        return buffer.getInt(n * 8);
     }
 
     /* return the nth physical position */
@@ -207,6 +205,7 @@ public class OffsetIndex {
 
     /**
      * Get the nth offset mapping from the index
+     *
      * @param n The entry number in the index
      * @return The offset/position pair at that entry
      */
@@ -215,7 +214,7 @@ public class OffsetIndex {
             lock.lock();
         }
         try {
-            if(n >= entries()) {
+            if (n >= entries()) {
                 throw new IllegalArgumentException(String.format("Attempt to fetch the %dth entry from an index of size %d.", n, entries()));
             }
             ByteBuffer idx = mmap.duplicate();
@@ -394,7 +393,9 @@ public class OffsetIndex {
         return file.delete();
     }
 
-    /** The number of entries in this index */
+    /**
+     * The number of entries in this index
+     */
     public int entries() {
         return size.get();
     }
@@ -406,13 +407,16 @@ public class OffsetIndex {
         return 8 * entries();
     }
 
-    /** Close the index */
+    /**
+     * Close the index
+     */
     public void close() throws IOException {
         trimToValidSize();
     }
 
     /**
      * Rename the file that backs this offset index
+     *
      * @return true iff the rename was successful
      */
     public boolean renameTo(final File f) {
@@ -423,6 +427,7 @@ public class OffsetIndex {
 
     /**
      * Do a basic sanity check on this index to detect obvious problems
+     *
      * @throws IllegalArgumentException if any problems are found
      */
     public void sanityCheck() {

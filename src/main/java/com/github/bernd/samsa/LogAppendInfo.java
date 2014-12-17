@@ -14,11 +14,11 @@ public class LogAppendInfo {
     public boolean offsetsMonotonic;
 
     /**
-     * @param firstOffset The first offset in the message set
-     * @param lastOffset The last offset in the message set
-     * @param shallowCount The number of shallow messages
-     * @param validBytes The number of valid bytes
-     * @param codec The codec used in the message set
+     * @param firstOffset      The first offset in the message set
+     * @param lastOffset       The last offset in the message set
+     * @param shallowCount     The number of shallow messages
+     * @param validBytes       The number of valid bytes
+     * @param codec            The codec used in the message set
      * @param offsetsMonotonic Are the offsets in this message set monotonically increasing
      */
     public LogAppendInfo(final long firstOffset,

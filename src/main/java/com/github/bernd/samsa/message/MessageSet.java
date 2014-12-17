@@ -48,9 +48,11 @@ public abstract class MessageSet implements Iterable<MessageAndOffset> {
         return LOG_OVERHEAD + message.size();
     }
 
-    /** Write the messages in this set to the given channel starting at the given offset byte.
+    /**
+     * Write the messages in this set to the given channel starting at the given offset byte.
      * Less than the complete amount may be written, but no more than maxSize can be. The number
-     * of bytes written is returned */
+     * of bytes written is returned
+     */
     public abstract int writeTo(GatheringByteChannel channel, long offset, int maxSize) throws IOException;
 
     /**
@@ -76,7 +78,7 @@ public abstract class MessageSet implements Iterable<MessageAndOffset> {
         Iterator<MessageAndOffset> iter = iterator();
         int i = 0;
 
-        while(iter.hasNext() && i < 100) {
+        while (iter.hasNext() && i < 100) {
             final MessageAndOffset message = iter.next();
             builder.append(message);
             if (iter.hasNext()) {

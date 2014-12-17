@@ -65,7 +65,7 @@ public class LogOffsetMetadata {
 
     @Override
     public String toString() {
-      return messageOffset + " [" + segmentBaseOffset + " : " + relativePositionInSegment + "]";
+        return messageOffset + " [" + segmentBaseOffset + " : " + relativePositionInSegment + "]";
     }
 
     public long getMessageOffset() {

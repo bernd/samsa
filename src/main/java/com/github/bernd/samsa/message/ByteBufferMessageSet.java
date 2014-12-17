@@ -19,13 +19,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A sequence of messages stored in a byte buffer
- *
+ * <p/>
  * There are two ways to create a ByteBufferMessageSet
- *
+ * <p/>
  * Option 1: From a ByteBuffer which already contains the serialized message set. Consumers will use this method.
- *
+ * <p/>
  * Option 2: Give it a list of messages along with instructions relating to serialization format. Producers will use this method.
- *
  */
 public class ByteBufferMessageSet extends MessageSet {
     private final ByteBuffer buffer;
@@ -123,7 +122,7 @@ public class ByteBufferMessageSet extends MessageSet {
     private int shallowValidBytes() {
         if (shallowValidByteCount < 0) {
             int bytes = 0;
-            final Iterator<MessageAndOffset> iter= internalIterator(true);
+            final Iterator<MessageAndOffset> iter = internalIterator(true);
             while (iter.hasNext()) {
                 final MessageAndOffset messageAndOffset = iter.next();
                 bytes += MessageSet.entrySize(messageAndOffset.getMessage());
@@ -133,7 +132,9 @@ public class ByteBufferMessageSet extends MessageSet {
         return shallowValidByteCount;
     }
 
-    /** Write the messages in this set to the given channel */
+    /**
+     * Write the messages in this set to the given channel
+     */
     @Override
     public int writeTo(GatheringByteChannel channel, long offset, int maxSize) {
         // Ignore offset and size from input. We just want to write the whole buffer to the channel.
@@ -151,13 +152,17 @@ public class ByteBufferMessageSet extends MessageSet {
         return written;
     }
 
-    /** default iterator that iterates over decompressed messages */
+    /**
+     * default iterator that iterates over decompressed messages
+     */
     @Override
     public Iterator<MessageAndOffset> iterator() {
         return internalIterator(false);
     }
 
-    /** iterator over compressed messages without decompressing */
+    /**
+     * iterator over compressed messages without decompressing
+     */
     public Iterator<MessageAndOffset> shallowIterator() {
         return internalIterator(true);
     }
@@ -178,7 +183,7 @@ public class ByteBufferMessageSet extends MessageSet {
 
             @Override
             protected MessageAndOffset makeNext() {
-                if (isShallow){
+                if (isShallow) {
                     return makeNextOuter();
                 } else {
                     if (innerDone()) {
@@ -229,7 +234,7 @@ public class ByteBufferMessageSet extends MessageSet {
                                 // TODO Ignore?
                                 e.printStackTrace();
                             }
-                            if (! innerIter.hasNext()) {
+                            if (!innerIter.hasNext()) {
                                 innerIter = null;
                             }
                             return makeNext();

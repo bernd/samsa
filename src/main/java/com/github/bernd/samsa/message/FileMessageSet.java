@@ -18,9 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * An on-disk message set. An optional start and end position can be applied to the message set
  * which will allow slicing a subset of the file.
- *
+ * <p/>
  * This is NOT thread-safe!
- *
  */
 public class FileMessageSet extends MessageSet {
     private static final Logger LOG = LoggerFactory.getLogger(FileMessageSet.class);
@@ -34,10 +33,10 @@ public class FileMessageSet extends MessageSet {
     private final AtomicInteger _size;
 
     /**
-     * @param file The file name for the underlying log data
+     * @param file    The file name for the underlying log data
      * @param channel the underlying file channel used
-     * @param start A lower bound on the absolute position in the file from which the message set begins
-     * @param end The upper bound on the absolute position in the file at which the message set ends
+     * @param start   A lower bound on the absolute position in the file from which the message set begins
+     * @param end     The upper bound on the absolute position in the file at which the message set ends
      * @param isSlice Should the start and end parameters be used for slicing?
      * @throws IOException
      */
@@ -93,14 +92,13 @@ public class FileMessageSet extends MessageSet {
 
     /**
      * Return a message set which is a view into this set starting from the given position and with the given size limit.
-     *
+     * <p/>
      * If the size is beyond the end of the file, the end will be based on the size of the file at the time of the read.
-     *
+     * <p/>
      * If this message set is already sliced, the position will be taken relative to that slicing.
      *
      * @param position The start position to begin the read from
-     * @param size The number of bytes after the start position to include
-     *
+     * @param size     The number of bytes after the start position to include
      * @return A sliced wrapper on this message set limited based on the given position and size
      */
     public FileMessageSet read(final int position, final int size) throws IOException {
@@ -119,7 +117,8 @@ public class FileMessageSet extends MessageSet {
     /**
      * Search forward for the file position of the last offset that is greater than or equal to the target offset
      * and return its physical position. If no such offsets are found, return null.
-     * @param targetOffset The offset to search for.
+     *
+     * @param targetOffset     The offset to search for.
      * @param startingPosition The starting position in the file to begin searching from.
      */
     public OffsetPosition searchFor(final long targetOffset, final int startingPosition) throws IOException {
@@ -150,9 +149,10 @@ public class FileMessageSet extends MessageSet {
 
     /**
      * Write some of this set to the given channel.
-     * @param destChannel The channel to write to.
+     *
+     * @param destChannel   The channel to write to.
      * @param writePosition The position in the message set to begin writing from.
-     * @param size The maximum number of bytes to write
+     * @param size          The maximum number of bytes to write
      * @return The number of bytes actually written.
      */
     @Override
@@ -182,8 +182,9 @@ public class FileMessageSet extends MessageSet {
 
     /**
      * Get an iterator over the messages in the set. We only do shallow iteration here.
+     *
      * @param maxMessageSize A limit on allowable message size to avoid allocating unbounded memory.
-     * If we encounter a message larger than this we throw an InvalidMessageException.
+     *                       If we encounter a message larger than this we throw an InvalidMessageException.
      * @return The iterator.
      */
     public Iterator<MessageAndOffset> iterator(final int maxMessageSize) {
@@ -263,6 +264,7 @@ public class FileMessageSet extends MessageSet {
 
     /**
      * Delete this message set from the filesystem
+     *
      * @return True iff this message set was deleted.
      */
     public boolean delete() {
@@ -278,6 +280,7 @@ public class FileMessageSet extends MessageSet {
     /**
      * Truncate this file message set to the given size in bytes. Note that this API does no checking that the
      * given size falls on a valid message boundary.
+     *
      * @param targetSize The size to truncate to.
      * @return The number of bytes truncated off
      */
@@ -304,6 +307,7 @@ public class FileMessageSet extends MessageSet {
 
     /**
      * Rename the file that backs this message set
+     *
      * @return true iff the rename was successful
      */
     public boolean renameTo(final File f) {

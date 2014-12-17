@@ -44,6 +44,7 @@ public class LogConfig {
         public static final boolean UNCLEAN_LEADER_ELECTION_ENABLE = true;
         public static final int MIN_IN_SYNC_REPLICAS = 1;
     }
+
     public LogConfig(final int segmentSize,
                      final long SegmentMs,
                      final long segmentJitterMs,

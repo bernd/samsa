@@ -21,11 +21,10 @@ import java.util.Iterator;
  * the actual messages. The index is an OffsetIndex that maps from logical offsets to physical file positions. Each
  * segment has a base offset which is an offset <= the least offset of any message in this segment and > any offset in
  * any previous segment.
- *
+ * <p/>
  * A segment with a base offset of [base_offset] would be stored in two files, a [base_offset].index and a [base_offset].log file.
- *
+ * <p/>
  * NOT thread-safe!
- *
  */
 public class LogSegment {
     private static final Logger LOG = LoggerFactory.getLogger(LogSegment.class);
@@ -41,12 +40,11 @@ public class LogSegment {
     private long bytesSinceLastIndexEntry = 0;
 
     /**
-     *
-     * @param log The message set containing log entries
-     * @param index The offset index
-     * @param baseOffset A lower bound on the offsets in this segment
+     * @param log                The message set containing log entries
+     * @param index              The offset index
+     * @param baseOffset         A lower bound on the offsets in this segment
      * @param indexIntervalBytes The approximate number of bytes between entries in the index
-     * //@param time The time instance
+     *                           //@param time The time instance
      */
     public LogSegment(final FileMessageSet log,
                       final OffsetIndex index,
@@ -73,7 +71,9 @@ public class LogSegment {
                 rollJitterMs);
     }
 
-    /** Return the size in bytes of this log segment */
+    /**
+     * Return the size in bytes of this log segment
+     */
     public long size() {
         return log.sizeInBytes();
     }
@@ -81,12 +81,12 @@ public class LogSegment {
     /**
      * Append the given messages starting with the given offset. Add
      * an entry to the index if needed.
-     *
+     * <p/>
      * It is assumed this method is being called from within a lock.
-     *
+     * <p/>
      * NOT thread-safe!
      *
-     * @param offset The first offset in the message set.
+     * @param offset   The first offset in the message set.
      * @param messages The messages to append.
      */
     public void append(final long offset, final ByteBufferMessageSet messages) {
@@ -105,16 +105,15 @@ public class LogSegment {
 
     /**
      * Find the physical file position for the first message with offset >= the requested offset.
-     *
+     * <p/>
      * The lowerBound argument is an optimization that can be used if we already know a valid starting position
      * in the file higher than the greatest-lower-bound from the index.
      *
-     * @param offset The offset we want to translate
+     * @param offset               The offset we want to translate
      * @param startingFilePosition A lower bound on the file position from which to begin the search. This is purely an optimization and
-     * when omitted, the search will begin at the position in the offset index.
-     *
-     * Marked as @threadsafe
-     *
+     *                             when omitted, the search will begin at the position in the offset index.
+     *                             <p/>
+     *                             Marked as @threadsafe
      * @return The position in the log storing the message with the least offset >= the requested offset or null if no message meets this criteria.
      */
     private OffsetPosition translateOffset(final long offset, final int startingFilePosition) throws IOException {
@@ -129,15 +128,14 @@ public class LogSegment {
     /**
      * Read a message set from this segment beginning with the first offset >= startOffset. The message set will include
      * no more than maxSize bytes and will end before maxOffset if a maxOffset is specified.
-     *
+     * <p/>
      * Marked as @threadsafe
      *
      * @param startOffset A lower bound on the first offset to include in the message set we read
-     * @param maxSize The maximum number of bytes to include in the message set we read
-     * @param maxOffset An optional maximum offset for the message set we read
-     *
+     * @param maxSize     The maximum number of bytes to include in the message set we read
+     * @param maxOffset   An optional maximum offset for the message set we read
      * @return The fetched data and the offset metadata of the first message whose offset is >= startOffset,
-     *         or null if the startOffset is larger than the largest offset in this log
+     * or null if the startOffset is larger than the largest offset in this log
      */
     public FetchDataInfo read(final long startOffset, final Optional<Long> maxOffset, final int maxSize) throws IOException {
         if (maxSize < 0) {
@@ -187,12 +185,11 @@ public class LogSegment {
 
     /**
      * Run recovery on the given segment. This will rebuild the index from the log file and lop off any invalid bytes from the end of the log and index.
-     *
+     * <p/>
      * Marked as @nonthreadsafe
      *
      * @param maxMessageSize A bound the memory allocation in the case of a corrupt message size--we will assume any message larger than this
-     * is corrupt.
-     *
+     *                       is corrupt.
      * @return The number of bytes truncated from the log
      */
     public int recover(final int maxMessageSize) throws IOException {
@@ -235,7 +232,7 @@ public class LogSegment {
     /**
      * Truncate off all index and log entries with offsets >= the given offset.
      * If the given offset is larger than the largest message in this segment, do nothing.
-     *
+     * <p/>
      * Marked as @nonthreadsafe
      *
      * @param offset The offset to truncate to
@@ -260,7 +257,7 @@ public class LogSegment {
     /**
      * Calculate the offset that would be used for the next message to be append to this segment.
      * Note that this is expensive.
-     *
+     * <p/>
      * Marked as @threadsafe
      */
     public long nextOffset() throws IOException {
@@ -291,11 +288,11 @@ public class LogSegment {
      */
     public void changeFileSuffixes(final String oldSuffix, final String newSuffix) throws SamsaStorageException {
         final boolean logRenamed = log.renameTo(new File(Utils.replaceSuffix(log.getFile().getPath(), oldSuffix, newSuffix)));
-        if (! logRenamed) {
+        if (!logRenamed) {
             throw new SamsaStorageException(String.format("Failed to change the log file suffix from %s to %s for log segment %d", oldSuffix, newSuffix, baseOffset));
         }
         final boolean indexRenamed = index.renameTo(new File(Utils.replaceSuffix(index.getFile().getPath(), oldSuffix, newSuffix)));
-        if (! indexRenamed) {
+        if (!indexRenamed) {
             throw new SamsaStorageException(String.format("Failed to change the index file suffix from %s to %s for log segment %d", oldSuffix, newSuffix, baseOffset));
         }
     }
@@ -316,15 +313,16 @@ public class LogSegment {
 
     /**
      * Delete this log segment from the filesystem.
+     *
      * @throws SamsaStorageException if the delete fails.
      */
     public void delete() throws SamsaStorageException {
         final boolean deletedLog = log.delete();
         final boolean deletedIndex = index.delete();
-        if (! deletedLog && log.getFile().exists()) {
+        if (!deletedLog && log.getFile().exists()) {
             throw new SamsaStorageException("Delete of log " + log.getFile().getName() + " failed.");
         }
-        if(!deletedIndex && index.getFile().exists()) {
+        if (!deletedIndex && index.getFile().exists()) {
             throw new SamsaStorageException("Delete of index " + index.getFile().getName() + " failed.");
         }
     }

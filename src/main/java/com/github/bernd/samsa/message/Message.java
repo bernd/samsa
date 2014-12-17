@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 
 /**
  * A message. The format of an N byte message is the following:
- *
+ * <p/>
  * 1. 4 byte CRC32 of the message
  * 2. 1 byte "magic" identifier to allow format changes, value is 0 currently
  * 3. 1 byte "attributes" identifier to allow annotations on the message independent of the version (e.g. compression enabled, type of codec used)
@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
  * 5. K byte key
  * 6. 4 byte payload length, containing length V
  * 7. V byte payload
- *
+ * <p/>
  * Default constructor wraps an existing ByteBuffer with the Message object with no change to the contents.
  */
 public class Message {
@@ -33,7 +33,9 @@ public class Message {
     private static final int KEY_OFFSET = KEY_SIZE_OFFSET + KEY_SIZE_LENGTH;
     private static final int VALUE_SIZE_LENGTH = 4;
 
-    /** The amount of overhead bytes in a message */
+    /**
+     * The amount of overhead bytes in a message
+     */
     public static final int MESSAGE_OVERHEAD = KEY_OFFSET + VALUE_SIZE_LENGTH;
 
     /**
@@ -62,11 +64,12 @@ public class Message {
 
     /**
      * A constructor to create a Message
-     * @param bytes The payload of the message
-     * @param key The key of the message (null, if none)
+     *
+     * @param bytes            The payload of the message
+     * @param key              The key of the message (null, if none)
      * @param compressionCodec The compression codec used on the contents of the message (if any)
-     * @param payloadOffset The offset into the payload array used to extract payload
-     * @param payloadSize The size of the payload to use
+     * @param payloadOffset    The offset into the payload array used to extract payload
+     * @param payloadSize      The size of the payload to use
      */
     public Message(final byte[] bytes,
                    final byte[] key,
@@ -171,7 +174,7 @@ public class Message {
      * Throw an InvalidMessageException if isValid is false for this message
      */
     public void ensureValid() {
-        if(! isValid()) {
+        if (!isValid()) {
             throw new InvalidMessageException("Message is corrupt (stored crc = " + checksum() + ", computed crc = " + computeChecksum() + ")");
         }
     }

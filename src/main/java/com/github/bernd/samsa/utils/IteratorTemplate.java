@@ -13,7 +13,7 @@ public abstract class IteratorTemplate<T> implements Iterator<T> {
     private T nextItem = null;
 
     public T next() {
-        if (! hasNext()) {
+        if (!hasNext()) {
             throw new NoSuchElementException();
         }
         state = State.NOT_READY;
@@ -24,7 +24,7 @@ public abstract class IteratorTemplate<T> implements Iterator<T> {
     }
 
     public T peek() {
-        if (! hasNext()) {
+        if (!hasNext()) {
             throw new NoSuchElementException();
         }
         return nextItem;
