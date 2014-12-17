@@ -1,7 +1,13 @@
 package com.github.bernd.samsa;
 
 import com.github.bernd.samsa.compression.CompressionCodec;
-import com.github.bernd.samsa.message.*;
+import com.github.bernd.samsa.message.ByteBufferMessageSet;
+import com.github.bernd.samsa.message.InvalidMessageSizeException;
+import com.github.bernd.samsa.message.Message;
+import com.github.bernd.samsa.message.MessageAndOffset;
+import com.github.bernd.samsa.message.MessageSet;
+import com.github.bernd.samsa.message.MessageSetSizeTooLargeException;
+import com.github.bernd.samsa.message.MessageSizeTooLargeException;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -14,7 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;

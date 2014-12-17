@@ -1,8 +1,5 @@
 package com.github.bernd.samsa.compression;
 
-import com.github.bernd.samsa.compression.CompressionCodec;
-import com.github.bernd.samsa.compression.UnknownCodecException;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 
