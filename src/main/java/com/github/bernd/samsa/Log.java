@@ -753,7 +753,7 @@ public class Log {
     /**
      * Completely delete this log directory and all contents from the file system with no delay
      */
-    private void delete() throws SamsaStorageException {
+    public void delete() throws SamsaStorageException {
         synchronized (lock) {
             for (LogSegment segment : logSegments()) {
                 segment.delete();
@@ -769,7 +769,7 @@ public class Log {
      *
      * @param targetOffset The offset to truncate to, an upper bound on all offsets in the log after truncation is complete.
      */
-    private void truncateTo(final long targetOffset) throws IOException, SamsaStorageException {
+    public void truncateTo(final long targetOffset) throws IOException, SamsaStorageException {
         LOG.info(String.format("Truncating log %s to offset %d.", name(), targetOffset));
         if (targetOffset < 0) {
             throw new IllegalArgumentException(String.format("Cannot truncate to a negative offset (%d).", targetOffset));
@@ -799,7 +799,7 @@ public class Log {
      *
      * @param newOffset The new offset to start the log with
      */
-    private void truncateFullyAndStartAt(final long newOffset) throws SamsaStorageException, IOException {
+    public void truncateFullyAndStartAt(final long newOffset) throws SamsaStorageException, IOException {
         LOG.debug("Truncate and start log '" + name() + "' to " + newOffset);
         synchronized (lock) {
             final ArrayList<LogSegment> segmentsToDelete = Lists.newArrayList(logSegments());
@@ -934,5 +934,17 @@ public class Log {
      */
     public LogSegment addSegment(final LogSegment segment) {
         return segments.put(segment.getBaseOffset(), segment);
+    }
+
+    public File getDir() {
+        return dir;
+    }
+
+    public LogConfig getConfig() {
+        return config;
+    }
+
+    public long getRecoveryPoint() {
+        return recoveryPoint;
     }
 }
