@@ -32,6 +32,7 @@ public class LogSegment {
     private final OffsetIndex index;
     private final long baseOffset;
     private final int indexIntervalBytes;
+    private final long rollJitterMs;
     private long created;
 
     /* the number of bytes since we last added an entry in the offset index */
@@ -54,6 +55,7 @@ public class LogSegment {
         this.index = index;
         this.baseOffset = baseOffset;
         this.indexIntervalBytes = indexIntervalBytes;
+        this.rollJitterMs = rollJitterMs;
         created = System.currentTimeMillis();
     }
 
@@ -338,5 +340,25 @@ public class LogSegment {
     public void setLastModified(final long ms) {
         log.getFile().setLastModified(ms);
         index.getFile().setLastModified(ms);
+    }
+
+    public long getBaseOffset() {
+        return baseOffset;
+    }
+
+    public FileMessageSet getLog() {
+        return log;
+    }
+
+    public OffsetIndex getIndex() {
+        return index;
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public long getRollJitterMs() {
+        return rollJitterMs;
     }
 }

@@ -1,7 +1,7 @@
 package com.github.bernd.samsa;
 
 public class LogOffsetMetadata {
-    private static final LogOffsetMetadata UNKNOWN_OFFSET_METADATA = new LogOffsetMetadata(-1, 0, 0);
+    public static final LogOffsetMetadata UNKNOWN_OFFSET_METADATA = new LogOffsetMetadata(-1, 0, 0);
     private static final long UNKNOWN_SEG_BASE_OFFSET = -1L;
     private static final int UNKNOWN_FILE_POSITION = -1;
     private final long messageOffset;
@@ -66,5 +66,9 @@ public class LogOffsetMetadata {
     @Override
     public String toString() {
       return messageOffset + " [" + segmentBaseOffset + " : " + relativePositionInSegment + "]";
+    }
+
+    public long getMessageOffset() {
+        return messageOffset;
     }
 }

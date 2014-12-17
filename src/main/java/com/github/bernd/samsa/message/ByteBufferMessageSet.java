@@ -244,7 +244,7 @@ public class ByteBufferMessageSet extends MessageSet {
      * Update the offsets for this message set. This method attempts to do an in-place conversion
      * if there is no compression, but otherwise recopies the messages
      */
-    private ByteBufferMessageSet assignOffsets(final AtomicLong offsetCounter, final CompressionCodec codec) throws IOException {
+    public ByteBufferMessageSet assignOffsets(final AtomicLong offsetCounter, final CompressionCodec codec) throws IOException {
         if (codec == CompressionCodec.NONE) {
             // do an in-place conversion
             int position = 0;

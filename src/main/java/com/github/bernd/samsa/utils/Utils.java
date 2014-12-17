@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.List;
 
 public class Utils {
     /**
@@ -90,5 +91,52 @@ public class Utils {
             throw new IllegalArgumentException(String.format("Expected string to end with '%s' but string is '%s'", oldSuffix, s));
         }
         return s.substring(0, s.length() - oldSuffix.length()) + newSuffix;
+    }
+
+    /**
+     * Get the absolute value of the given number. If the number is Int.MinValue return 0. This is different from
+     * java.lang.Math.abs or scala.math.abs in that they return Int.MinValue (!).
+     */
+    public static int abs(int n) {
+        return n & 0x7fffffff;
+    }
+
+    /**
+     * Recursively delete the given file/directory and any subfiles (if any exist)
+     * @param file The root file at which to begin deleting
+     */
+    public static void rm(final String file) {
+        rm(new File(file));
+    }
+
+    /**
+     * Recursively delete the list of files/directories and any subfiles (if any exist)
+     * @param files sequence of files to be deleted
+     */
+    public static void rm(final List<String> files) {
+        for (String file : files) {
+            rm(new File(file));
+        }
+
+    }
+
+    /**
+     * Recursively delete the given file/directory and any subfiles (if any exist)
+     * @param file The root file at which to begin deleting
+     */
+    public static void rm(final File file) {
+        if (file == null) {
+            return;
+        } else if (file.isDirectory()) {
+            final File[] files = file.listFiles();
+            if (files != null) {
+                for (File f: files) {
+                    rm(f);
+                }
+            }
+            file.delete();
+        } else {
+            file.delete();
+        }
     }
 }

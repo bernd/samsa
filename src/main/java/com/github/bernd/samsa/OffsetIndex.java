@@ -454,4 +454,8 @@ public class OffsetIndex {
     public File getFile() {
         return file;
     }
+
+    public int getMaxEntries() {
+        return maxEntries;
+    }
 }
