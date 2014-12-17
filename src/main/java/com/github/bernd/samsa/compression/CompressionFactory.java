@@ -1,4 +1,4 @@
-package com.github.bernd.samsa.message;
+package com.github.bernd.samsa.compression;
 
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.github.bernd.samsa.compression.UnknownCodecException;

@@ -1,7 +1,5 @@
 package com.github.bernd.samsa.message;
 
-import com.github.bernd.samsa.Message;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;

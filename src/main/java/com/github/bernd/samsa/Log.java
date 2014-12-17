@@ -1,9 +1,7 @@
 package com.github.bernd.samsa;
 
 import com.github.bernd.samsa.compression.CompressionCodec;
-import com.github.bernd.samsa.message.ByteBufferMessageSet;
-import com.github.bernd.samsa.message.MessageAndOffset;
-import com.github.bernd.samsa.message.MessageSet;
+import com.github.bernd.samsa.message.*;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;

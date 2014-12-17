@@ -1,7 +1,5 @@
 package com.github.bernd.samsa.message;
 
-import com.github.bernd.samsa.Message;
-
 public class MessageAndOffset {
     private final Message message;
     private final long offset;

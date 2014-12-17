@@ -1,4 +1,4 @@
-package com.github.bernd.samsa;
+package com.github.bernd.samsa.message;
 
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.github.bernd.samsa.utils.Utils;

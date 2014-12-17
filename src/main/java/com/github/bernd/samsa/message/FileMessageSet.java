@@ -1,8 +1,7 @@
-package com.github.bernd.samsa;
+package com.github.bernd.samsa.message;
 
-import com.github.bernd.samsa.message.ByteBufferMessageSet;
-import com.github.bernd.samsa.message.MessageAndOffset;
-import com.github.bernd.samsa.message.MessageSet;
+import com.github.bernd.samsa.OffsetPosition;
+import com.github.bernd.samsa.SamsaException;
 import com.github.bernd.samsa.utils.IteratorTemplate;
 import com.github.bernd.samsa.utils.Utils;
 import org.slf4j.Logger;

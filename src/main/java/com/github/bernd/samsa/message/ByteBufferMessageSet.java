@@ -1,8 +1,7 @@
 package com.github.bernd.samsa.message;
 
-import com.github.bernd.samsa.InvalidMessageException;
-import com.github.bernd.samsa.Message;
 import com.github.bernd.samsa.compression.CompressionCodec;
+import com.github.bernd.samsa.compression.CompressionFactory;
 import com.github.bernd.samsa.utils.IteratorTemplate;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
