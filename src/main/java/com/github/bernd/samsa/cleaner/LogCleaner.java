@@ -1,7 +1,7 @@
-package com.github.bernd.samsa;
+package com.github.bernd.samsa.cleaner;
 
-import com.github.bernd.samsa.cleaner.CleanerThread;
-import com.github.bernd.samsa.cleaner.LogCleanerManager;
+import com.github.bernd.samsa.Log;
+import com.github.bernd.samsa.TopicAndPartition;
 import com.github.bernd.samsa.utils.SystemTime;
 import com.github.bernd.samsa.utils.Throttler;
 import com.google.common.collect.Lists;

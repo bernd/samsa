@@ -1,4 +1,4 @@
-package com.github.bernd.samsa;
+package com.github.bernd.samsa.cleaner;
 
 /**
  * Configuration parameters for the log cleaner

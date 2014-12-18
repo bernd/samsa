@@ -1,6 +1,5 @@
 package com.github.bernd.samsa.cleaner;
 
-import com.github.bernd.samsa.CleanerConfig;
 import com.github.bernd.samsa.OffsetMapException;
 import com.github.bernd.samsa.SamsaStorageException;
 import com.github.bernd.samsa.SkimpyOffsetMap;
