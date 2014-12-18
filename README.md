@@ -1,6 +1,8 @@
 Samsa
 =====
 
+[![Build Status](https://travis-ci.org/bernd/samsa.svg)](https://travis-ci.org/bernd/samsa)
+
 This is just me playing around with porting the [Kafka](http://kafka.apache.org/)
 log manager to pure Java.
 
