@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 
 /**
  * An append-only log for storing messages.
@@ -291,16 +290,14 @@ public class Log {
             if (truncatedBytes > 0) {
                 // we had an invalid message, delete all remaining log
                 LOG.warn(String.format("Corruption found in segment %d of log %s, truncating to offset %d.", curr.getBaseOffset(), name(), curr.nextOffset()));
-                unflushed.forEachRemaining(new Consumer<LogSegment>() {
-                    @Override
-                    public void accept(LogSegment logSegment) {
-                        try {
-                            deleteSegment(logSegment);
-                        } catch (SamsaStorageException e) {
-                            LOG.error(e.getMessage(), e);
-                        }
+                while (unflushed.hasNext()) {
+                    final LogSegment logSegment = unflushed.next();
+                    try {
+                        deleteSegment(logSegment);
+                    } catch (SamsaStorageException e) {
+                        LOG.error(e.getMessage(), e);
                     }
-                });
+                }
             }
         }
     }

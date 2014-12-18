@@ -27,7 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.LongUnaryOperator;
 
 /**
  * The entry point to the kafka log management subsystem. The log manager is responsible for log creation, retrieval, and cleaning.
@@ -197,8 +196,8 @@ public class LogManager {
                         LOG.debug("Loading log '" + logDir.getName() + "'");
 
                         final TopicAndPartition topicPartition = Log.parseTopicPartitionName(logDir.getName());
-                        final LogConfig config = topicConfigs.getOrDefault(topicPartition.getTopic(), defaultConfig);
-                        final Long logRecoveryPoint = recoveryPoints.getOrDefault(topicPartition, 0L);
+                        final LogConfig config = topicConfigs.containsKey(topicPartition.getTopic()) ? topicConfigs.get(topicPartition.getTopic()) : defaultConfig;
+                        final Long logRecoveryPoint = recoveryPoints.containsKey(topicPartition) ? recoveryPoints.get(topicPartition) : 0L;
 
                         try {
                             final Log current = new Log(logDir, config, logRecoveryPoint, scheduler);
@@ -332,7 +331,7 @@ public class LogManager {
             final ExecutorService pool = Executors.newFixedThreadPool(ioThreads);
             threadPools.add(pool);
 
-            final Collection<Log> logsInDir = logsByDir().getOrDefault(dir.toString(), Maps.<TopicAndPartition, Log>newHashMap()).values();
+            final Collection<Log> logsInDir = (logsByDir().containsKey(dir.toString()) ? logsByDir().get(dir.toString()) : Maps.<TopicAndPartition, Log>newHashMap()).values();
             final List<Runnable> jobsForDir = Lists.newArrayList();
 
             for (final Log log : logsInDir) {
@@ -606,12 +605,8 @@ public class LogManager {
             @Override
             public Boolean apply(final LogSegment segment) {
                 if (diff.get() - segment.size() >= 0) {
-                    diff.updateAndGet(new LongUnaryOperator() {
-                        @Override
-                        public long applyAsLong(long value) {
-                            return value - segment.size();
-                        }
-                    });
+                    // TODO: This is not really safe I guess...
+                    diff.set(diff.get() - segment.size());
                     return true;
                 } else {
                     return false;

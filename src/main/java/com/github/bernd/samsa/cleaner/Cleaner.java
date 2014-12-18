@@ -16,6 +16,7 @@ import com.github.bernd.samsa.utils.SamsaTime;
 import com.github.bernd.samsa.utils.Throttler;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -174,7 +175,7 @@ public class Cleaner {
                     return String.valueOf(segment.getBaseOffset());
                 }
             });
-            LOG.info(String.format("Swapping in cleaned segment %d for segment(s) %s in log %s.", cleaned.getBaseOffset(), String.join(", ", baseOffsets), log.name()));
+            LOG.info(String.format("Swapping in cleaned segment %d for segment(s) %s in log %s.", cleaned.getBaseOffset(), Joiner.on(", ").join(baseOffsets), log.name()));
             log.replaceSegments(cleaned, segments);
         } catch (LogCleaningAbortedException e) {
             cleaned.delete();

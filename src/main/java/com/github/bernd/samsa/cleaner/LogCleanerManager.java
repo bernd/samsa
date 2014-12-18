@@ -106,7 +106,7 @@ public class LogCleanerManager {
                 // is no longer valid, reset to the log starting offset and log the error event
                 final long logStartOffset = log.logSegments().iterator().next().getBaseOffset();
                 final long firstDirtyOffset;
-                final long offset = lastClean.getOrDefault(topicAndPartition, logStartOffset);
+                final long offset = lastClean.containsKey(topicAndPartition) ? lastClean.get(topicAndPartition) : logStartOffset;
 
                 if (offset < logStartOffset) {
                     LOG.error(String.format("Resetting first dirty offset to log start offset %d since the checkpointed offset %d is invalid.",
