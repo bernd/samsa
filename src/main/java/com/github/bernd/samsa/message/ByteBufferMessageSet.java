@@ -218,7 +218,7 @@ public class ByteBufferMessageSet extends MessageSet {
                 ByteBuffer message = topIter.slice();
                 message.limit(size);
                 topIter.position(topIter.position() + size);
-                final Message newMessage = new Message(message.array());
+                final Message newMessage = new Message(message);
 
                 if (isShallow) {
                     return new MessageAndOffset(newMessage, offset);

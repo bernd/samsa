@@ -62,6 +62,22 @@ public class Message {
 
     private final ByteBuffer buffer;
 
+    private static int calculateValueSizeLength(final byte[] bytes,
+                                                final int payloadSize,
+                                                final int payloadOffset) {
+        int valueSizeLength;
+
+        if (bytes == null) {
+            valueSizeLength = 0;
+        } else if (payloadSize >= 0) {
+            valueSizeLength = payloadSize;
+        } else {
+            valueSizeLength = bytes.length - payloadOffset;
+        }
+
+        return valueSizeLength;
+    }
+
     /**
      * A constructor to create a Message
      *
@@ -76,23 +92,13 @@ public class Message {
                    final CompressionCodec compressionCodec,
                    final int payloadOffset,
                    final int payloadSize) {
-        int valueSizeLength;
-
-        if (bytes == null) {
-            valueSizeLength = 0;
-        } else if (payloadSize >= 0) {
-            valueSizeLength = payloadSize;
-        } else {
-            valueSizeLength = bytes.length - payloadOffset;
-        }
-
-        this.buffer = ByteBuffer.allocate(CRC_LENGTH +
+        this(ByteBuffer.allocate(CRC_LENGTH +
                 MAGIC_LENGTH +
                 ATTRIBUTES_LENGTH +
                 KEY_SIZE_LENGTH +
                 (key == null ? 0 : key.length) +
                 VALUE_SIZE_LENGTH +
-                valueSizeLength);
+                calculateValueSizeLength(bytes, payloadSize, payloadOffset)));
 
         // skip crc, we will fill that in at the end
         buffer.position(MAGIC_OFFSET);
@@ -131,6 +137,10 @@ public class Message {
 
         // now compute the checksum and fill it in
         Utils.writeUnsignedInt(buffer, CRC_OFFSET, computeChecksum());
+    }
+
+    public Message(final ByteBuffer buffer) {
+        this.buffer = buffer;
     }
 
     public Message(final byte[] bytes, final byte[] key, final CompressionCodec compressionCodec) {

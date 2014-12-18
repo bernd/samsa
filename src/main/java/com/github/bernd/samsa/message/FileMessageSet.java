@@ -226,7 +226,7 @@ public class FileMessageSet extends MessageSet {
 
                 // increment the location and return the item
                 location += size + 12;
-                return new MessageAndOffset(new Message(buffer.array()), offset);
+                return new MessageAndOffset(new Message(buffer), offset);
             }
         };
     }
