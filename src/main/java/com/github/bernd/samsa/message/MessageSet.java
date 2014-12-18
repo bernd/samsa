@@ -37,8 +37,8 @@ public abstract class MessageSet implements Iterable<MessageAndOffset> {
     /**
      * The size of a list of messages
      */
-    public static int messageSetSize(List<Message> messages) {
-        return messageSetSize(messages);
+    public static int messageSetSize(final List<Message> messages) {
+        return messageSetSize((Iterable<Message>) messages);
     }
 
     /**

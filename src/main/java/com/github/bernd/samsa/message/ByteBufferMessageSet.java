@@ -169,7 +169,7 @@ public class ByteBufferMessageSet extends MessageSet {
 
     @Override
     public int sizeInBytes() {
-        return 0;
+        return buffer.limit();
     }
 
     public ByteBuffer getBuffer() {
