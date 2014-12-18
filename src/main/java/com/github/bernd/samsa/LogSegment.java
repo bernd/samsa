@@ -361,4 +361,8 @@ public class LogSegment {
     public long getRollJitterMs() {
         return rollJitterMs;
     }
+
+    public int getIndexIntervalBytes() {
+        return indexIntervalBytes;
+    }
 }

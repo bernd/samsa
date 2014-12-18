@@ -1,6 +1,7 @@
 package com.github.bernd.samsa;
 
 import com.github.bernd.samsa.utils.Os;
+import com.github.bernd.samsa.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,26 +233,20 @@ public class OffsetIndex {
     public void append(final long offset, final int position) {
         lock.lock();
         try {
-            require(!isFull(), "Attempt to append to a full index (size = " + size + ").");
+            Utils.require(!isFull(), "Attempt to append to a full index (size = " + size + ").");
             if (size.get() == 0 || offset > lastOffset) {
                 LOG.debug(String.format("Adding index entry %d => %d to %s.", offset, position, file.getName()));
                 mmap.putInt((int) (offset - baseOffset));
                 mmap.putInt(position);
                 size.incrementAndGet();
                 lastOffset = offset;
-                require(entries() * 8 == mmap.position(), entries() + " entries but file position in index is " + mmap.position() + ".");
+                Utils.require(entries() * 8 == mmap.position(), entries() + " entries but file position in index is " + mmap.position() + ".");
             } else {
                 throw new InvalidOffsetException(String.format("Attempt to append an offset (%d) to position %d no larger than the last offset appended (%d) to %s.",
                         offset, entries(), lastOffset, file.getAbsolutePath()));
             }
         } finally {
             lock.unlock();
-        }
-    }
-
-    public void require(final boolean requirement, final String message) {
-        if (!requirement) {
-            throw new IllegalArgumentException("requirement failed: " + message);
         }
     }
 
@@ -431,11 +426,11 @@ public class OffsetIndex {
      * @throws IllegalArgumentException if any problems are found
      */
     public void sanityCheck() {
-        require(entries() == 0 || lastOffset > baseOffset,
+        Utils.require(entries() == 0 || lastOffset > baseOffset,
                 String.format("Corrupt index found, index file (%s) has non-zero size but the last offset is %d and the base offset is %d",
                         file.getAbsolutePath(), lastOffset, baseOffset));
         long len = file.length();
-        require(len % 8 == 0,
+        Utils.require(len % 8 == 0,
                 "Index file " + file.getName() + " is corrupt, found " + len +
                         " bytes which is not positive or not a multiple of 8.");
     }

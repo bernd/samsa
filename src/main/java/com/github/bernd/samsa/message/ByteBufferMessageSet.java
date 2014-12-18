@@ -112,7 +112,7 @@ public class ByteBufferMessageSet extends MessageSet {
         return new ByteBufferMessageSet(outputBuffer);
     }
 
-    private static void writeMessage(final ByteBuffer buffer, final Message message, final long offset) {
+    public static void writeMessage(final ByteBuffer buffer, final Message message, final long offset) {
         buffer.putLong(offset);
         buffer.putInt(message.size());
         buffer.put(message.buffer());

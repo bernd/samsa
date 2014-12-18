@@ -906,7 +906,7 @@ public class Log {
      * @param newSegment  The new log segment to add to the log
      * @param oldSegments The old log segments to delete from the log
      */
-    private void replaceSegments(final LogSegment newSegment, final List<LogSegment> oldSegments) throws SamsaStorageException {
+    public void replaceSegments(final LogSegment newSegment, final List<LogSegment> oldSegments) throws SamsaStorageException {
         synchronized (lock) {
             // need to do this in two phases to be crash safe AND do the delete asynchronously
             // if we crash in the middle of this we complete the swap in loadSegments()
@@ -946,5 +946,9 @@ public class Log {
 
     public long getRecoveryPoint() {
         return recoveryPoint;
+    }
+
+    public TopicAndPartition getTopicAndPartition() {
+        return topicAndPartition;
     }
 }

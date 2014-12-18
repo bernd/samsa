@@ -54,6 +54,16 @@ public class Utils {
     }
 
     /**
+     * Read a big-endian integer from a byte array
+     */
+    public static int readInt(final byte[] bytes, final int offset) {
+        return ((bytes[offset] & 0xFF) << 24) |
+                ((bytes[offset + 1] & 0xFF) << 16) |
+                ((bytes[offset + 2] & 0xFF) << 8) |
+                (bytes[offset + 3] & 0xFF);
+    }
+
+    /**
      * Compute the CRC32 of the byte array
      *
      * @param bytes The array to compute the checksum for
@@ -146,6 +156,18 @@ public class Utils {
             file.delete();
         } else {
             file.delete();
+        }
+    }
+
+    public static void require(final boolean requirement) {
+        if (!requirement) {
+            throw new IllegalArgumentException("requirement failed");
+        }
+    }
+
+    public static void require(final boolean requirement, final String message) {
+        if (!requirement) {
+            throw new IllegalArgumentException("requirement failed: " + message);
         }
     }
 }

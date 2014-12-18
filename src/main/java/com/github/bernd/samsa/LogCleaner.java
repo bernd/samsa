@@ -1,11 +1,20 @@
 package com.github.bernd.samsa;
 
+import com.github.bernd.samsa.cleaner.CleanerThread;
+import com.github.bernd.samsa.cleaner.LogCleanerManager;
+import com.github.bernd.samsa.utils.SystemTime;
+import com.github.bernd.samsa.utils.Throttler;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The cleaner is responsible for removing obsolete records from logs which have the dedupe retention strategy.
@@ -42,6 +51,14 @@ public class LogCleaner {
     private final List<File> logDirs;
     private final ConcurrentMap<TopicAndPartition, Log> logs;
 
+    /* for managing the state of partitions being cleaned. */
+    private final LogCleanerManager cleanerManager;
+    /* the threads */
+    private final List<CleanerThread> cleaners = Lists.newArrayList();
+
+    /* a throttle used to limit the I/O of all the cleaner threads to a user-specified maximum rate */
+    private final Throttler throttler;
+
     /**
      * @param config  Configuration parameters for the cleaner
      * @param logDirs The directories where offset checkpoints reside
@@ -49,10 +66,17 @@ public class LogCleaner {
      */
     public LogCleaner(final CleanerConfig config,
                       final List<File> logDirs,
-                      final ConcurrentMap<TopicAndPartition, Log> logs) {
+                      final ConcurrentMap<TopicAndPartition, Log> logs) throws IOException, NoSuchAlgorithmException {
         this.config = config;
         this.logDirs = logDirs;
         this.logs = logs;
+        this.cleanerManager = new LogCleanerManager(logDirs, logs);
+        this.throttler = new Throttler(config.getMaxIoBytesPerSecond(),
+                300, true, new SystemTime(), "cleaner-io", "bytes");
+
+        for (int i = 0; i < config.getNumThreads(); i++) {
+            cleaners.add(new CleanerThread(i, config, cleanerManager));
+        }
     }
 
     /**
@@ -60,7 +84,9 @@ public class LogCleaner {
      */
     public void startup() {
         LOG.info("Starting the log cleaner");
-        //cleaners.foreach(_.start())
+        for (CleanerThread cleaner : cleaners) {
+            cleaner.start();
+        }
     }
 
     /**
@@ -68,31 +94,45 @@ public class LogCleaner {
      */
     public void shutdown() {
         LOG.info("Shutting down the log cleaner.");
-        //cleaners.foreach(_.shutdown())
+        for (CleanerThread cleaner : cleaners) {
+            cleaner.shutdown();
+        }
     }
 
     /**
      * Abort the cleaning of a particular partition, if it's in progress. This call blocks until the cleaning of
      * the partition is aborted.
      */
-    public void abortCleaning(final TopicAndPartition topicAndPartition) {
-        //cleanerManager.abortCleaning(topicAndPartition);
+    public void abortCleaning(final TopicAndPartition topicAndPartition) throws InterruptedException {
+        cleanerManager.abortCleaning(topicAndPartition);
     }
 
     /**
      * Abort the cleaning of a particular partition if it's in progress, and pause any future cleaning of this partition.
      * This call blocks until the cleaning of the partition is aborted and paused.
      */
-    public void abortAndPauseCleaning(final TopicAndPartition topicAndPartition) {
-        //cleanerManager.abortAndPauseCleaning(topicAndPartition);
+    public void abortAndPauseCleaning(final TopicAndPartition topicAndPartition) throws InterruptedException {
+        cleanerManager.abortAndPauseCleaning(topicAndPartition);
     }
 
     /**
      * Resume the cleaning of a paused partition. This call blocks until the cleaning of a partition is resumed.
      */
     public void resumeCleaning(final TopicAndPartition topicAndPartition) {
-        //cleanerManager.resumeCleaning(topicAndPartition);
+        cleanerManager.resumeCleaning(topicAndPartition);
     }
 
-    // TODO Implement all methods!
+    /**
+     * TODO:
+     * For testing, a way to know when work has completed. This method blocks until the
+     * cleaner has processed up to the given offset on the specified topic/partition
+     */
+    public void awaitCleaned(final String topic,
+                             final int part,
+                             final long offset,
+                             final long timeout) throws IOException {
+        while (!cleanerManager.allCleanerCheckpoints().containsKey(new TopicAndPartition(topic, part))) {
+            Uninterruptibles.sleepUninterruptibly(10, TimeUnit.MILLISECONDS);
+        }
+    }
 }

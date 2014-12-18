@@ -400,7 +400,7 @@ public class LogManager {
      *
      * @param partitionAndOffsets Partition logs that need to be truncated
      */
-    public void truncateTo(final Map<TopicAndPartition, Long> partitionAndOffsets) throws IOException, SamsaStorageException {
+    public void truncateTo(final Map<TopicAndPartition, Long> partitionAndOffsets) throws IOException, SamsaStorageException, InterruptedException {
         for (Map.Entry<TopicAndPartition, Long> entry : partitionAndOffsets.entrySet()) {
             final TopicAndPartition topicAndPartition = entry.getKey();
             final Long truncateOffset = entry.getValue();
@@ -428,7 +428,7 @@ public class LogManager {
      *
      * @param newOffset The new offset to start the log with
      */
-    public void truncateFullyAndStartAt(final TopicAndPartition topicAndPartition, final long newOffset) throws IOException, SamsaStorageException {
+    public void truncateFullyAndStartAt(final TopicAndPartition topicAndPartition, final long newOffset) throws IOException, SamsaStorageException, InterruptedException {
         final Log log = logs.get(topicAndPartition);
         // If the log does not exist, skip it
         if (log != null) {
@@ -513,7 +513,7 @@ public class LogManager {
     /**
      * Delete a log.
      */
-    public void deleteLog(final TopicAndPartition topicAndPartition) throws SamsaStorageException {
+    public void deleteLog(final TopicAndPartition topicAndPartition) throws SamsaStorageException, InterruptedException {
         Log removedLog = null;
         synchronized (logCreationOrDeletionLock) {
             removedLog = logs.remove(topicAndPartition);
