@@ -288,14 +288,14 @@ public class Cleaner {
             List<LogSegment> group = Lists.newArrayList(segs.get(0));
             long logSize = segs.get(0).size();
             int indexSize = segs.get(0).getIndex().sizeInBytes();
-            segs = segs.subList(1, segs.size() - 1);
+            segs = segs.subList(1, segs.size());
             while (!segs.isEmpty() &&
                     logSize + segs.get(0).size() < maxSize &&
                     indexSize + segs.get(0).getIndex().sizeInBytes() < maxIndexSize) {
                 group.add(0, segs.get(0));
                 logSize += segs.get(0).size();
                 indexSize += segs.get(0).getIndex().sizeInBytes();
-                segs = segs.subList(1, segs.size() - 1);
+                segs = segs.subList(1, segs.size());
             }
             grouped.add(0, Lists.reverse(group));
         }
