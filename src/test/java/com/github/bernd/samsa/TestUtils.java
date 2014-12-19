@@ -1,4 +1,4 @@
-package com.github.bernd.samsa.message;
+package com.github.bernd.samsa;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;

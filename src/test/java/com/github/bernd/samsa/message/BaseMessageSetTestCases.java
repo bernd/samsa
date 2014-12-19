@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.github.bernd.samsa.message.TestUtils.checkEquals;
+import static com.github.bernd.samsa.TestUtils.checkEquals;
 import static org.testng.Assert.assertEquals;
 
 public abstract class BaseMessageSetTestCases {

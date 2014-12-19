@@ -1,5 +1,6 @@
 package com.github.bernd.samsa.message;
 
+import com.github.bernd.samsa.TestUtils;
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.collect.Lists;
