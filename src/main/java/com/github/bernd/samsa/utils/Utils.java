@@ -114,7 +114,11 @@ public class Utils {
      * java.lang.Math.abs or scala.math.abs in that they return Int.MinValue (!).
      */
     public static int abs(int n) {
-        return n & 0x7fffffff;
+        if (n == Integer.MIN_VALUE) {
+            return 0;
+        } else {
+            return Math.abs(n);
+        }
     }
 
     /**
