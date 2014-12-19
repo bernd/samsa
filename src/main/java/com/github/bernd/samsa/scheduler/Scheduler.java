@@ -1,4 +1,4 @@
-package com.github.bernd.samsa;
+package com.github.bernd.samsa.scheduler;
 
 import java.util.concurrent.TimeUnit;
 

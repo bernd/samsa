@@ -8,6 +8,7 @@ import com.github.bernd.samsa.message.MessageAndOffset;
 import com.github.bernd.samsa.message.MessageSet;
 import com.github.bernd.samsa.message.MessageSetSizeTooLargeException;
 import com.github.bernd.samsa.message.MessageSizeTooLargeException;
+import com.github.bernd.samsa.scheduler.Scheduler;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
