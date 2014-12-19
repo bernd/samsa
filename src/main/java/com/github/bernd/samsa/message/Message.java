@@ -22,16 +22,16 @@ public class Message {
     /**
      * The current offset and size for all the fixed-length fields
      */
-    private static final int CRC_OFFSET = 0;
-    private static final int CRC_LENGTH = 4;
-    private static final int MAGIC_OFFSET = CRC_OFFSET + CRC_LENGTH;
-    private static final int MAGIC_LENGTH = 1;
-    private static final int ATTRIBUTES_OFFSET = MAGIC_OFFSET + MAGIC_LENGTH;
-    private static final int ATTRIBUTES_LENGTH = 1;
-    private static final int KEY_SIZE_OFFSET = ATTRIBUTES_OFFSET + ATTRIBUTES_LENGTH;
-    private static final int KEY_SIZE_LENGTH = 4;
-    private static final int KEY_OFFSET = KEY_SIZE_OFFSET + KEY_SIZE_LENGTH;
-    private static final int VALUE_SIZE_LENGTH = 4;
+    public static final int CRC_OFFSET = 0;
+    public static final int CRC_LENGTH = 4;
+    public static final int MAGIC_OFFSET = CRC_OFFSET + CRC_LENGTH;
+    public static final int MAGIC_LENGTH = 1;
+    public static final int ATTRIBUTES_OFFSET = MAGIC_OFFSET + MAGIC_LENGTH;
+    public static final int ATTRIBUTES_LENGTH = 1;
+    public static final int KEY_SIZE_OFFSET = ATTRIBUTES_OFFSET + ATTRIBUTES_LENGTH;
+    public static final int KEY_SIZE_LENGTH = 4;
+    public static final int KEY_OFFSET = KEY_SIZE_OFFSET + KEY_SIZE_LENGTH;
+    public static final int VALUE_SIZE_LENGTH = 4;
 
     /**
      * The amount of overhead bytes in a message
@@ -46,7 +46,7 @@ public class Message {
     /**
      * The current "magic" value
      */
-    private static final byte CURRENT_MAGIC_VALUE = 0;
+    public static final byte CURRENT_MAGIC_VALUE = 0;
 
     /**
      * Specifies the mask for the compression code. 3 bits to hold the compression codec.

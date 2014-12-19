@@ -3,6 +3,7 @@ package com.github.bernd.samsa.message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import static org.testng.Assert.assertEquals;
@@ -10,6 +11,18 @@ import static org.testng.Assert.assertFalse;
 
 public class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
+
+    /**
+     * Check that the buffer content from buffer.position() to buffer.limit() is equal
+     */
+    public static void checkEquals(final ByteBuffer b1, final ByteBuffer b2) {
+        assertEquals(b1.limit() - b1.position(), b2.limit() - b2.position(),
+                "Buffers should have equal length");
+        for (int i = 0; i < (b1.limit() - b1.position()); i++) {
+            assertEquals(b1.get(b1.position() + i), b2.get(b1.position() + i),
+                    "byte " + i + " byte not equal.");
+        }
+    }
 
     /**
      * Throw an exception if the two iterators are of differing lengths or contain
