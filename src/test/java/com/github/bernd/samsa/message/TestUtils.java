@@ -1,10 +1,12 @@
 package com.github.bernd.samsa.message;
 
+import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -53,6 +55,30 @@ public class TestUtils {
                 length2 += 1;
             }
             assertFalse(true, "Iterators have uneven length-- second has more: "+length2 + " > " + length);
+        }
+    }
+
+    /**
+     * Execute the given block. If it throws an assert error, retry. Repeat
+     * until no error is thrown or the time limit ellapses
+     */
+    public static void retry(final long maxWaitMs, final Runnable block) {
+        long wait = 1L;
+        final long startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                block.run();
+                return;
+            } catch (AssertionError e) {
+                final long ellapsed = System.currentTimeMillis() - startTime;
+                if (ellapsed > maxWaitMs) {
+                    throw e;
+                } else {
+                    LOG.info("Attempt failed, sleeping for " + wait + ", and then retrying.");
+                    Uninterruptibles.sleepUninterruptibly(wait, TimeUnit.MILLISECONDS);
+                    wait += Math.min(wait, 1000);
+                }
+            }
         }
     }
 }

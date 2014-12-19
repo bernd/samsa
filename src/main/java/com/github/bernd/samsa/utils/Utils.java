@@ -1,5 +1,8 @@
 package com.github.bernd.samsa.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,6 +12,8 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 public class Utils {
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+
     /**
      * Read an unsigned integer from the current position in the buffer,
      * incrementing the position by 4 bytes
@@ -173,5 +178,23 @@ public class Utils {
         if (!requirement) {
             throw new IllegalArgumentException("requirement failed: " + message);
         }
+    }
+
+    /**
+     * Create a new thread
+     * @param name The name of the thread
+     * @param runnable The work for the thread to do
+     * @param daemon Should the thread block JVM shutdown?
+     * @return The unstarted thread
+     */
+    public static Thread newThread(final String name, final Runnable runnable, final boolean daemon) {
+        final Thread thread = new Thread(runnable, name);
+        thread.setDaemon(daemon);
+        thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            public void uncaughtException(final Thread t, final Throwable e) {
+                LOG.error("Uncaught exception in thread '" + t.getName() + "':", e);
+            }
+        });
+        return thread;
     }
 }
