@@ -1,11 +1,14 @@
 package com.github.bernd.samsa;
 
+import com.github.bernd.samsa.utils.Utils;
 import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertEquals;
@@ -13,6 +16,9 @@ import static org.testng.Assert.assertFalse;
 
 public class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
+
+    private static final String IO_TMP_DIR = System.getProperty("java.io.tmpdir");
+    private static final Random RANDOM = new Random();
 
     /**
      * Check that the buffer content from buffer.position() to buffer.limit() is equal
@@ -80,5 +86,23 @@ public class TestUtils {
                 }
             }
         }
+    }
+
+    /**
+     * Create a temporary directory
+     */
+    public static File tempDir() {
+        final File f = new File(IO_TMP_DIR, "samsa-" + RANDOM.nextInt(1000000));
+        f.mkdirs();
+        f.deleteOnExit();
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                Utils.rm(f);
+            }
+        });
+
+        return f;
     }
 }

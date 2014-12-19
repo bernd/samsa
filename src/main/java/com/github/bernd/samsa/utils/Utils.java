@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.List;
 
 public class Utils {
@@ -196,5 +198,43 @@ public class Utils {
             }
         });
         return thread;
+    }
+
+    /**
+     * Read the given byte buffer into a byte array
+     */
+    public static byte[] readBytes(ByteBuffer buffer) {
+        return readBytes(buffer, 0, buffer.limit());
+    }
+
+    /**
+     * Read a byte array from the given offset and size in the buffer
+     */
+    public static byte[] readBytes(final ByteBuffer buffer, final int offset, final int size) {
+        byte[] dest = new byte[size];
+
+        if (buffer.hasArray()) {
+            System.arraycopy(buffer.array(), buffer.arrayOffset() + offset, dest, 0, size);
+        } else {
+            buffer.mark();
+            buffer.get(dest);
+            buffer.reset();
+        }
+        return dest;
+    }
+
+    /**
+     * Translate the given buffer into a string
+     * @param buffer The buffer to translate
+     * @param encoding The encoding to use in translating bytes to characters
+     */
+    public static String readString(final ByteBuffer buffer, final String encoding) throws UnsupportedEncodingException {
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return new String(bytes, encoding);
+    }
+
+    public static String readString(final ByteBuffer buffer) throws UnsupportedEncodingException {
+        return readString(buffer, Charset.defaultCharset().toString());
     }
 }

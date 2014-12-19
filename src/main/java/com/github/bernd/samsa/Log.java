@@ -330,6 +330,10 @@ public class Log {
         }
     }
 
+    public LogAppendInfo append(final ByteBufferMessageSet messages) throws SamsaStorageException, MessageSetSizeTooLargeException, MessageSizeTooLargeException, InvalidMessageSizeException, IOException {
+        return append(messages, true);
+    }
+
     /**
      * Append this message set to the active segment of the log, rolling over to a fresh segment if necessary.
      * <p/>

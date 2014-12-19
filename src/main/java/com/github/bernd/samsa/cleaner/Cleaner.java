@@ -91,7 +91,7 @@ public class Cleaner {
      * @param cleanable The log to be cleaned
      * @return The first offset not cleaned
      */
-    protected long clean(final LogToClean cleanable) throws IOException, OffsetMapException, SamsaStorageException, LogCleaningAbortedException {
+    public long clean(final LogToClean cleanable) throws IOException, OffsetMapException, SamsaStorageException, LogCleaningAbortedException {
         stats.clear();
         LOG.info(String.format("Beginning cleaning of log %s.", cleanable.getLog().name()));
         final Log log = cleanable.getLog();
@@ -135,10 +135,10 @@ public class Cleaner {
      * @param map             The offset map to use for cleaning segments
      * @param deleteHorizonMs The time to retain delete tombstones
      */
-    private void cleanSegments(final Log log,
-                               final List<LogSegment> segments,
-                               final OffsetMap map,
-                               final long deleteHorizonMs) throws IOException, OffsetMapException, SamsaStorageException, LogCleaningAbortedException {
+    public void cleanSegments(final Log log,
+                              final List<LogSegment> segments,
+                              final OffsetMap map,
+                              final long deleteHorizonMs) throws IOException, OffsetMapException, SamsaStorageException, LogCleaningAbortedException {
         // create a new segment with the suffix .cleaned appended to both the log and index name
         final File logFile = new File(segments.get(0).getLog().getFile().getPath() + Log.CLEANED_FILE_SUFFIX);
         logFile.delete();
