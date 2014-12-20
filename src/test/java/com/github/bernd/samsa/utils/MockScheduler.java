@@ -1,7 +1,5 @@
 package com.github.bernd.samsa.utils;
 
-import com.github.bernd.samsa.utils.SamsaTime;
-import com.github.bernd.samsa.utils.Scheduler;
 import com.google.common.collect.Queues;
 
 import java.util.PriorityQueue;
@@ -21,11 +19,11 @@ import java.util.concurrent.TimeUnit;
  * Incrementing the time to the exact next execution time of a task will result in that task executing (it as if execution itself takes no time).
  */
 public class MockScheduler implements Scheduler {
-    private final SamsaTime time;
+    private final Time time;
 
     private final PriorityQueue<MockTask> tasks = Queues.newPriorityQueue();
 
-    public MockScheduler(final SamsaTime time) {
+    public MockScheduler(final Time time) {
         this.time = time;
     }
 

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * It also comes with an associated scheduler instance for managing background tasks in
  * a deterministic way.
  */
-public class MockTime implements SamsaTime {
+public class MockTime implements Time {
     public final MockScheduler scheduler;
     private volatile long currentMS;
 

@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * The normal system implementation of time functions
  */
-public class SystemTime implements SamsaTime {
+public class SystemTime implements Time {
     @Override
     public long milliseconds() {
         return System.currentTimeMillis();

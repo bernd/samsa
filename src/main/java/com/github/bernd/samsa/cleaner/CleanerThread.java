@@ -4,7 +4,7 @@ import com.github.bernd.samsa.OffsetMapException;
 import com.github.bernd.samsa.SamsaStorageException;
 import com.github.bernd.samsa.SkimpyOffsetMap;
 import com.github.bernd.samsa.TopicAndPartition;
-import com.github.bernd.samsa.utils.SamsaTime;
+import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.ShutdownableThread;
 import com.github.bernd.samsa.utils.SystemTime;
 import com.github.bernd.samsa.utils.Throttler;
@@ -42,7 +42,7 @@ public class CleanerThread extends ShutdownableThread {
         this.cleanerManager = cleanerManager;
         this.isRunning = getIsRunning();
 
-        final SamsaTime time = new SystemTime();
+        final Time time = new SystemTime();
 
         this.throttler = new Throttler(config.getMaxIoBytesPerSecond(),
                 300, true, new SystemTime(), "cleaner-io", "bytes");

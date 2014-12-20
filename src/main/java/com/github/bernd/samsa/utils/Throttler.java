@@ -19,7 +19,7 @@ public class Throttler {
     private final double desiredRatePerSec;
     private final long checkIntervalMs;
     private final boolean throttleDown;
-    private final SamsaTime time;
+    private final Time time;
 
     private long periodStartNs;
     private double observedSoFar = 0.0;
@@ -42,7 +42,7 @@ public class Throttler {
     public Throttler(final double desiredRatePerSec,
                      final long checkIntervalMs,
                      final boolean throttleDown,
-                     final SamsaTime time) {
+                     final Time time) {
         this(desiredRatePerSec, checkIntervalMs, throttleDown, time, "throttler", "entries");
     }
 
@@ -54,7 +54,7 @@ public class Throttler {
     public Throttler(final double desiredRatePerSec,
                      final long checkIntervalMs,
                      final boolean throttleDown,
-                     final SamsaTime time,
+                     final Time time,
                      final String metricName,
                      final String units) {
         this.desiredRatePerSec = desiredRatePerSec;
@@ -68,17 +68,17 @@ public class Throttler {
         //meter.mark(observed.toLong);
         synchronized (lock) {
             observedSoFar += observed;
-            final long now = System.nanoTime();
+            final long now = time.nanoseconds();
             final long elapsedNs = now - periodStartNs;
             // if we have completed an interval AND we have observed something, maybe
             // we should take a little nap
-            if (elapsedNs > checkIntervalMs * SamsaTime.NS_PER_MS && observedSoFar > 0) {
-                final double rateInSecs = (observedSoFar * SamsaTime.NS_PER_SEC) / elapsedNs;
+            if (elapsedNs > checkIntervalMs * Time.NS_PER_MS && observedSoFar > 0) {
+                final double rateInSecs = (observedSoFar * Time.NS_PER_SEC) / elapsedNs;
                 final boolean needAdjustment = !(throttleDown ^ (rateInSecs > desiredRatePerSec));
                 if (needAdjustment) {
                     // solve for the amount of time to sleep to make us hit the desired rate
-                    final double desiredRateMs = desiredRatePerSec / (double) SamsaTime.MS_PER_SEC;
-                    final long elapsedMs = elapsedNs / SamsaTime.NS_PER_MS;
+                    final double desiredRateMs = desiredRatePerSec / (double) Time.MS_PER_SEC;
+                    final long elapsedMs = elapsedNs / Time.NS_PER_MS;
                     final long sleepTime = Math.round((observedSoFar / desiredRateMs) - elapsedMs);
                     if (sleepTime > 0) {
                         if (LOG.isTraceEnabled()) {
@@ -95,7 +95,7 @@ public class Throttler {
 
     public static void main(final String[] args) throws InterruptedException {
         Random rand = new Random();
-        SamsaTime time = new SystemTime();
+        Time time = new SystemTime();
         Throttler throttler = new Throttler(100000, 100, true, time);
         long interval = 30000;
         long start = time.milliseconds();

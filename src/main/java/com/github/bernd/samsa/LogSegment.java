@@ -6,7 +6,7 @@ import com.github.bernd.samsa.message.FileMessageSet;
 import com.github.bernd.samsa.message.InvalidMessageException;
 import com.github.bernd.samsa.message.MessageAndOffset;
 import com.github.bernd.samsa.message.MessageSet;
-import com.github.bernd.samsa.utils.SamsaTime;
+import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
@@ -35,7 +35,7 @@ public class LogSegment {
     private final long baseOffset;
     private final int indexIntervalBytes;
     private final long rollJitterMs;
-    private final SamsaTime time;
+    private final Time time;
     private long created;
 
     /* the number of bytes since we last added an entry in the offset index */
@@ -53,7 +53,7 @@ public class LogSegment {
                       final long baseOffset,
                       final int indexIntervalBytes,
                       final long rollJitterMs,
-                      final SamsaTime time) {
+                      final Time time) {
         this.log = log;
         this.index = index;
         this.baseOffset = baseOffset;
@@ -68,7 +68,7 @@ public class LogSegment {
                       final int indexIntervalBytes,
                       final int maxIndexSize,
                       final long rollJitterMs,
-                      final SamsaTime time) throws IOException {
+                      final Time time) throws IOException {
         this(new FileMessageSet(Log.logFilename(dir, startOffset)),
                 new OffsetIndex(Log.indexFilename(dir, startOffset), startOffset, maxIndexSize),
                 startOffset,

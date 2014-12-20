@@ -8,7 +8,7 @@ import com.github.bernd.samsa.message.MessageAndOffset;
 import com.github.bernd.samsa.message.MessageSet;
 import com.github.bernd.samsa.message.MessageSetSizeTooLargeException;
 import com.github.bernd.samsa.message.MessageSizeTooLargeException;
-import com.github.bernd.samsa.utils.SamsaTime;
+import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Scheduler;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
@@ -124,7 +124,7 @@ public class Log {
     private volatile LogConfig config;
     private volatile long recoveryPoint;
     private final Scheduler scheduler;
-    private final SamsaTime time;
+    private final Time time;
     private final Map<String, String> tags = new HashMap();
 
     /* A lock that guards all modifications to the log */
@@ -152,7 +152,7 @@ public class Log {
                final LogConfig config, // was marked as volatile
                final long recoveryPoint,
                final Scheduler scheduler,
-               final SamsaTime time) throws IOException {
+               final Time time) throws IOException {
         this.dir = dir;
         this.config = config;
         this.recoveryPoint = recoveryPoint;

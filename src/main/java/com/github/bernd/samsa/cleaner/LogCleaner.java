@@ -2,7 +2,7 @@ package com.github.bernd.samsa.cleaner;
 
 import com.github.bernd.samsa.Log;
 import com.github.bernd.samsa.TopicAndPartition;
-import com.github.bernd.samsa.utils.SamsaTime;
+import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Throttler;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -50,7 +50,7 @@ public class LogCleaner {
     private final CleanerConfig config;
     private final List<File> logDirs;
     private final ConcurrentMap<TopicAndPartition, Log> logs;
-    private final SamsaTime time;
+    private final Time time;
 
     /* for managing the state of partitions being cleaned. */
     private final LogCleanerManager cleanerManager;
@@ -68,7 +68,7 @@ public class LogCleaner {
     public LogCleaner(final CleanerConfig config,
                       final List<File> logDirs,
                       final ConcurrentMap<TopicAndPartition, Log> logs,
-                      final SamsaTime time) throws IOException, NoSuchAlgorithmException {
+                      final Time time) throws IOException, NoSuchAlgorithmException {
         this.config = config;
         this.logDirs = logDirs;
         this.logs = logs;

@@ -2,7 +2,7 @@ package com.github.bernd.samsa;
 
 import com.github.bernd.samsa.cleaner.CleanerConfig;
 import com.github.bernd.samsa.cleaner.LogCleaner;
-import com.github.bernd.samsa.utils.SamsaTime;
+import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Scheduler;
 import com.github.bernd.samsa.utils.FileLock;
 import com.google.common.base.Function;
@@ -63,7 +63,7 @@ public class LogManager {
     private final long retentionCheckMs;
     private final Scheduler scheduler;
     private final BrokerState brokerState;
-    private final SamsaTime time;
+    private final Time time;
     private final List<FileLock> dirLocks;
 
     public LogManager(final List<File> logDirs,
@@ -76,7 +76,7 @@ public class LogManager {
                       final long retentionCheckMs,
                       final Scheduler scheduler,
                       final BrokerState brokerState,
-                      final SamsaTime time) throws Throwable {
+                      final Time time) throws Throwable {
         this.logDirs = logDirs;
         this.topicConfigs = topicConfigs;
         this.defaultConfig = defaultConfig;

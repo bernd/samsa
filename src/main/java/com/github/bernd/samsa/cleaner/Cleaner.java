@@ -12,7 +12,7 @@ import com.github.bernd.samsa.message.FileMessageSet;
 import com.github.bernd.samsa.message.Message;
 import com.github.bernd.samsa.message.MessageAndOffset;
 import com.github.bernd.samsa.message.MessageSet;
-import com.github.bernd.samsa.utils.SamsaTime;
+import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Throttler;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
@@ -52,7 +52,7 @@ public class Cleaner {
     private final int maxIoBufferSize;
     private final double dupBufferLoadFactor;
     private final Throttler throttler;
-    private final SamsaTime time;
+    private final Time time;
     private final CheckDoneCallback<TopicAndPartition> checkDone;
 
     /**
@@ -68,7 +68,7 @@ public class Cleaner {
                    final int maxIoBufferSize,
                    final double dupBufferLoadFactor,
                    final Throttler throttler,
-                   final SamsaTime time,
+                   final Time time,
                    final CheckDoneCallback<TopicAndPartition> checkDone) {
         this.id = id;
         this.offsetMap = offsetMap;

@@ -3,7 +3,7 @@ package com.github.bernd.samsa.utils;
 /**
  * A mockable interface for time functions
  */
-public interface SamsaTime {
+public interface Time {
     public static final long NS_PER_US = 1000;
     public static final long US_PER_MS = 1000;
     public static final long MS_PER_SEC = 1000;

@@ -1,6 +1,6 @@
 package com.github.bernd.samsa.cleaner;
 
-import com.github.bernd.samsa.utils.SamsaTime;
+import com.github.bernd.samsa.utils.Time;
 
 /**
  * A simple struct for collecting stats about log cleaning.
@@ -8,7 +8,7 @@ import com.github.bernd.samsa.utils.SamsaTime;
  * This class it not thread-safe!
  */
 public class CleanerStats {
-    private final SamsaTime time;
+    private final Time time;
 
     public long startTime = 0L;
     public long mapCompleteTime = 0L;
@@ -21,7 +21,7 @@ public class CleanerStats {
     public long messagesWritten = 0L;
     public double bufferUtilization = 0.0d;
 
-    public CleanerStats(final SamsaTime time) {
+    public CleanerStats(final Time time) {
         this.time = time;
 
         clear();
