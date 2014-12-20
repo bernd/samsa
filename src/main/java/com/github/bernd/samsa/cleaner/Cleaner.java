@@ -146,7 +146,8 @@ public class Cleaner {
         indexFile.delete();
         final FileMessageSet messages = new FileMessageSet(logFile);
         final OffsetIndex index = new OffsetIndex(indexFile, segments.get(0).getBaseOffset(), segments.get(0).getIndex().getMaxIndexSize());
-        final LogSegment cleaned = new LogSegment(messages, index, segments.get(0).getBaseOffset(), segments.get(0).getIndexIntervalBytes(), log.getConfig().getSegmentJitterMs());
+        final LogSegment cleaned = new LogSegment(messages,index, segments.get(0).getBaseOffset(),
+                segments.get(0).getIndexIntervalBytes(), log.getConfig().getSegmentJitterMs(), time);
 
         try {
             // clean segments into the new destination segment

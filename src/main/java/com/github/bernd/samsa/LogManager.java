@@ -2,6 +2,7 @@ package com.github.bernd.samsa;
 
 import com.github.bernd.samsa.cleaner.CleanerConfig;
 import com.github.bernd.samsa.cleaner.LogCleaner;
+import com.github.bernd.samsa.utils.SamsaTime;
 import com.github.bernd.samsa.utils.Scheduler;
 import com.github.bernd.samsa.utils.FileLock;
 import com.google.common.base.Function;
@@ -62,6 +63,7 @@ public class LogManager {
     private final long retentionCheckMs;
     private final Scheduler scheduler;
     private final BrokerState brokerState;
+    private final SamsaTime time;
     private final List<FileLock> dirLocks;
 
     public LogManager(final List<File> logDirs,
@@ -73,7 +75,8 @@ public class LogManager {
                       final long flushCheckpointMs,
                       final long retentionCheckMs,
                       final Scheduler scheduler,
-                      final BrokerState brokerState) throws Throwable {
+                      final BrokerState brokerState,
+                      final SamsaTime time) throws Throwable {
         this.logDirs = logDirs;
         this.topicConfigs = topicConfigs;
         this.defaultConfig = defaultConfig;
@@ -84,6 +87,7 @@ public class LogManager {
         this.retentionCheckMs = retentionCheckMs;
         this.scheduler = scheduler;
         this.brokerState = brokerState;
+        this.time = time;
 
         createAndValidateLogDirs(logDirs);
 
@@ -96,7 +100,7 @@ public class LogManager {
         loadLogs();
 
         if (cleanerConfig.isEnableCleaner()) {
-            cleaner = new LogCleaner(cleanerConfig, logDirs, logs);
+            cleaner = new LogCleaner(cleanerConfig, logDirs, logs, time);
         } else {
             cleaner = null;
         }
@@ -201,7 +205,7 @@ public class LogManager {
                         final Long logRecoveryPoint = recoveryPoints.containsKey(topicPartition) ? recoveryPoints.get(topicPartition) : 0L;
 
                         try {
-                            final Log current = new Log(logDir, config, logRecoveryPoint, scheduler);
+                            final Log current = new Log(logDir, config, logRecoveryPoint, scheduler, time);
                             final Log previous = logs.put(topicPartition, current);
 
                             if (previous != null) {
@@ -501,7 +505,7 @@ public class LogManager {
             final File dataDir = nextLogDir();
             final File dir = new File(dataDir, topicAndPartition.getTopic() + "-" + topicAndPartition.getPartition());
             dir.mkdirs();
-            final Log newLog = new Log(dir, config, 0L, scheduler);
+            final Log newLog = new Log(dir, config, 0L, scheduler, time);
             logs.put(topicAndPartition, newLog);
             LOG.info(String.format("Created log for partition [%s,%d] in %s with properties {%s}.",
                     topicAndPartition.getTopic(),
@@ -584,7 +588,7 @@ public class LogManager {
      * Runs through the log removing segments older than a certain age
      */
     private int cleanupExpiredSegments(final Log log) throws IOException, SamsaStorageException {
-        final long startMs = System.currentTimeMillis();
+        final long startMs = time.milliseconds();
         return log.deleteOldSegments(new Function<LogSegment, Boolean>() {
             @Override
             public Boolean apply(LogSegment segment) {
@@ -622,7 +626,7 @@ public class LogManager {
     public void cleanupLogs() throws IOException, SamsaStorageException {
         LOG.debug("Beginning log cleanup...");
         int total = 0;
-        final long startMs = System.currentTimeMillis();
+        final long startMs = time.milliseconds();
         for (final Log log : allLogs()) {
             if (log.getConfig().isCompact()) {
                 continue;
@@ -631,7 +635,7 @@ public class LogManager {
             total += cleanupExpiredSegments(log) + cleanupSegmentsToMaintainSize(log);
         }
         LOG.debug("Log cleanup completed. " + total + " files deleted in " +
-                (System.currentTimeMillis() - startMs) / 1000 + " seconds");
+                (time.milliseconds() - startMs) / 1000 + " seconds");
     }
 
     /**
@@ -676,7 +680,7 @@ public class LogManager {
             final Log log = entry.getValue();
 
             try {
-                final long timeSinceLastFlush = System.currentTimeMillis() - log.lastFlushTime();
+                final long timeSinceLastFlush = time.milliseconds() - log.lastFlushTime();
                 LOG.debug("Checking if flush is needed on " + topicAndPartition.getTopic() + " flush interval  " + log.getConfig().getFlushMs() +
                         " last flushed " + log.lastFlushTime() + " time since last flush: " + timeSinceLastFlush);
                 if (timeSinceLastFlush >= log.getConfig().getFlushMs()) {

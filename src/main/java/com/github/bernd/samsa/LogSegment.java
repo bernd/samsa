@@ -6,6 +6,7 @@ import com.github.bernd.samsa.message.FileMessageSet;
 import com.github.bernd.samsa.message.InvalidMessageException;
 import com.github.bernd.samsa.message.MessageAndOffset;
 import com.github.bernd.samsa.message.MessageSet;
+import com.github.bernd.samsa.utils.SamsaTime;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
@@ -34,6 +35,7 @@ public class LogSegment {
     private final long baseOffset;
     private final int indexIntervalBytes;
     private final long rollJitterMs;
+    private final SamsaTime time;
     private long created;
 
     /* the number of bytes since we last added an entry in the offset index */
@@ -44,31 +46,35 @@ public class LogSegment {
      * @param index              The offset index
      * @param baseOffset         A lower bound on the offsets in this segment
      * @param indexIntervalBytes The approximate number of bytes between entries in the index
-     *                           //@param time The time instance
+     * @param time               The time instance
      */
     public LogSegment(final FileMessageSet log,
                       final OffsetIndex index,
                       final long baseOffset,
                       final int indexIntervalBytes,
-                      final long rollJitterMs) {
+                      final long rollJitterMs,
+                      final SamsaTime time) {
         this.log = log;
         this.index = index;
         this.baseOffset = baseOffset;
         this.indexIntervalBytes = indexIntervalBytes;
         this.rollJitterMs = rollJitterMs;
-        created = System.currentTimeMillis();
+        this.time = time;
+        created = time.milliseconds();
     }
 
     public LogSegment(final File dir,
                       final long startOffset,
                       final int indexIntervalBytes,
                       final int maxIndexSize,
-                      final long rollJitterMs) throws IOException {
+                      final long rollJitterMs,
+                      final SamsaTime time) throws IOException {
         this(new FileMessageSet(Log.logFilename(dir, startOffset)),
                 new OffsetIndex(Log.indexFilename(dir, startOffset), startOffset, maxIndexSize),
                 startOffset,
                 indexIntervalBytes,
-                rollJitterMs);
+                rollJitterMs,
+                time);
     }
 
     /**
@@ -248,7 +254,7 @@ public class LogSegment {
         index.resize(index.getMaxIndexSize());
         int bytesTruncated = log.truncateTo(mapping.getPosition());
         if (log.sizeInBytes() == 0) {
-            created = System.currentTimeMillis();
+            created = time.milliseconds();
         }
         bytesSinceLastIndexEntry = 0;
         return bytesTruncated;

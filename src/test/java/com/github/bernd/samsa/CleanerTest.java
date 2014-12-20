@@ -337,7 +337,7 @@ public class CleanerTest {
     }
 
     public Log makeLog(final File dir, final LogConfig config) throws IOException {
-        return new Log(dir, config, 0L, time.scheduler);
+        return new Log(dir, config, 0L, time.scheduler, time);
     }
 
     private Cleaner makeCleaner(final int capacity, final CheckDoneCallback<TopicAndPartition> checkDone) {

@@ -8,6 +8,7 @@ import com.github.bernd.samsa.message.MessageAndOffset;
 import com.github.bernd.samsa.message.MessageSet;
 import com.github.bernd.samsa.message.MessageSetSizeTooLargeException;
 import com.github.bernd.samsa.message.MessageSizeTooLargeException;
+import com.github.bernd.samsa.utils.SamsaTime;
 import com.github.bernd.samsa.utils.Scheduler;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
@@ -123,13 +124,14 @@ public class Log {
     private volatile LogConfig config;
     private volatile long recoveryPoint;
     private final Scheduler scheduler;
+    private final SamsaTime time;
     private final Map<String, String> tags = new HashMap();
 
     /* A lock that guards all modifications to the log */
     private final Object lock = new Object();
 
     /* last time it was flushed */
-    private final AtomicLong lastflushedTime = new AtomicLong(System.currentTimeMillis());
+    private final AtomicLong lastflushedTime;
 
     /* the actual segments of the log */
     private final ConcurrentNavigableMap<Long, LogSegment> segments = new ConcurrentSkipListMap();
@@ -144,15 +146,19 @@ public class Log {
      * @param config        The log configuration settings
      * @param recoveryPoint The offset at which to begin recovery--i.e. the first offset which has not been flushed to disk
      * @param scheduler     The thread pool scheduler used for background actions
+     * @param time          The time instance used for checking the clock
      */
     public Log(final File dir,
                final LogConfig config, // was marked as volatile
                final long recoveryPoint,
-               final Scheduler scheduler) throws IOException {
+               final Scheduler scheduler,
+               final SamsaTime time) throws IOException {
         this.dir = dir;
         this.config = config;
         this.recoveryPoint = recoveryPoint;
         this.scheduler = scheduler;
+        this.time = time;
+        this.lastflushedTime = new AtomicLong(time.milliseconds());
 
         loadSegments();
 
@@ -234,7 +240,8 @@ public class Log {
                         start,
                         config.getIndexInterval(),
                         config.getMaxIndexSize(),
-                        config.getRandomSegmentJitter());
+                        config.getRandomSegmentJitter(),
+                        time);
                 if (!hasIndex) {
                     LOG.error(String.format("Could not find index file corresponding to log file %s, rebuilding index...", segment.getLog().getFile().getAbsolutePath()));
                     segment.recover(config.getMaxMessageSize());
@@ -249,7 +256,8 @@ public class Log {
                     0,
                     config.getIndexInterval(),
                     config.getMaxIndexSize(),
-                    config.getRandomSegmentJitter()));
+                    config.getRandomSegmentJitter(),
+                    time));
         } else {
             recoverLog();
             // reset the index size of the currently active log segment to allow more entries
@@ -647,7 +655,7 @@ public class Log {
     private LogSegment maybeRoll(final int messagesSize) throws IOException {
         final LogSegment segment = activeSegment();
         if (segment.size() > config.getSegmentSize() - messagesSize ||
-                segment.size() > 0 && System.currentTimeMillis() - segment.getCreated() > config.getSegmentMs() - segment.getRollJitterMs() ||
+                segment.size() > 0 && time.milliseconds() - segment.getCreated() > config.getSegmentMs() - segment.getRollJitterMs() ||
                 segment.getIndex().isFull()) {
             LOG.debug(String.format("Rolling new log segment in %s (log_size = %d/%d, index_size = %d/%d, age_ms = %d/%d).",
                     name(),
@@ -655,7 +663,7 @@ public class Log {
                     config.getSegmentSize(),
                     segment.getIndex().entries(),
                     segment.getIndex().getMaxEntries(),
-                    System.currentTimeMillis() - segment.getCreated(),
+                    time.milliseconds() - segment.getCreated(),
                     config.getSegmentMs() - segment.getRollJitterMs()));
             return roll();
         } else {
@@ -670,7 +678,7 @@ public class Log {
      * @return The newly rolled segment
      */
     public LogSegment roll() throws IOException {
-        long start = System.nanoTime();
+        long start = time.nanoseconds();
 
         synchronized (lock) {
             final long newOffset = logEndOffset();
@@ -692,7 +700,8 @@ public class Log {
                     newOffset,
                     config.getIndexInterval(),
                     config.getMaxIndexSize(),
-                    config.getRandomSegmentJitter());
+                    config.getRandomSegmentJitter(),
+                    time);
             final LogSegment prev = addSegment(segment);
             if (prev != null) {
                 throw new SamsaException(String.format("Trying to roll a new log segment for topic partition %s with start offset %d while it already exists.", name(), newOffset));
@@ -710,7 +719,7 @@ public class Log {
                 }
             }, 0L, -1, TimeUnit.MILLISECONDS);
 
-            LOG.info("Rolled new log segment for '" + name() + String.format("' in %.0f ms.", (System.nanoTime() - start) / (1000.0 * 1000.0)));
+            LOG.info("Rolled new log segment for '" + name() + String.format("' in %.0f ms.", (time.nanoseconds() - start) / (1000.0 * 1000.0)));
 
             return segment;
         }
@@ -740,14 +749,14 @@ public class Log {
             return;
         }
         LOG.debug("Flushing log '" + name() + " up to offset " + offset + ", last flushed: " + lastFlushTime() + " current time: " +
-                System.currentTimeMillis() + " unflushed = " + unflushedMessages());
+                time.milliseconds() + " unflushed = " + unflushedMessages());
         for (final LogSegment segment : logSegments(recoveryPoint, offset)) {
             segment.flush();
         }
         synchronized (lock) {
             if (offset > recoveryPoint) {
                 recoveryPoint = offset;
-                lastflushedTime.set(System.currentTimeMillis());
+                lastflushedTime.set(time.milliseconds());
             }
         }
     }
@@ -813,7 +822,8 @@ public class Log {
                     newOffset,
                     config.getIndexInterval(),
                     config.getMaxIndexSize(),
-                    config.getRandomSegmentJitter()));
+                    config.getRandomSegmentJitter(),
+                    time));
             updateLogEndOffset(newOffset);
             recoveryPoint = Math.min(newOffset, recoveryPoint);
         }
