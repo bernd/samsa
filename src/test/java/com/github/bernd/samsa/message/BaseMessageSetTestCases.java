@@ -18,7 +18,7 @@ import static com.github.bernd.samsa.TestUtils.checkEquals;
 import static org.testng.Assert.assertEquals;
 
 public abstract class BaseMessageSetTestCases {
-    final protected List<Message> messages = Lists.newArrayList(new Message("abcd".getBytes()), new Message("efgh".getBytes()));
+    final protected List<Message> messages = Lists.newArrayList(new Message("abcd".getBytes()), new Message("efgh".getBytes()), new Message("ijkl".getBytes()));
 
     abstract public MessageSet createMessageSet(List<Message> messages, CompressionCodec compressed) throws IOException;
 

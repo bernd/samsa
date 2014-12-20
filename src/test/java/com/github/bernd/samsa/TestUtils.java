@@ -112,6 +112,15 @@ public class TestUtils {
     }
 
     /**
+     * Create a temporary file
+     */
+    public static File tempFile() throws IOException {
+        final File f = File.createTempFile("samsa", ".tmp");
+        f.deleteOnExit();
+        return f;
+    }
+
+    /**
      * Wrap the message in a message set
      * @param payload The bytes of the message
      */

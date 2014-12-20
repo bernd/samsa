@@ -319,4 +319,8 @@ public class FileMessageSet extends MessageSet {
     public File getFile() {
         return file;
     }
+
+    public FileChannel getChannel() {
+        return channel;
+    }
 }
