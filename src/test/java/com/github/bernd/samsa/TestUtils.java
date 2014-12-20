@@ -1,11 +1,16 @@
 package com.github.bernd.samsa;
 
+import com.github.bernd.samsa.compression.CompressionCodec;
+import com.github.bernd.samsa.message.ByteBufferMessageSet;
+import com.github.bernd.samsa.message.Message;
 import com.github.bernd.samsa.utils.Utils;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Random;
@@ -104,5 +109,24 @@ public class TestUtils {
         });
 
         return f;
+    }
+
+    /**
+     * Wrap the message in a message set
+     * @param payload The bytes of the message
+     */
+    public static ByteBufferMessageSet singleMessageSet(final byte[] payload,
+                                                        final CompressionCodec codec,
+                                                        final byte[] key) throws IOException {
+        return new ByteBufferMessageSet(codec, Lists.newArrayList(new Message(payload, key)));
+    }
+
+    public static ByteBufferMessageSet singleMessageSet(final byte[] payload,
+                                                        final CompressionCodec codec) throws IOException {
+        return singleMessageSet(payload, codec, null);
+    }
+
+    public static ByteBufferMessageSet singleMessageSet(final byte[] payload) throws IOException {
+        return singleMessageSet(payload, CompressionCodec.NONE);
     }
 }

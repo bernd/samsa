@@ -279,9 +279,9 @@ public class Cleaner {
      * @param maxIndexSize the maximum size in bytes for the total of all index data in a group
      * @return A list of grouped segments
      */
-    private List<List<LogSegment>> groupSegmentsBySize(final Iterable<LogSegment> segments,
-                                                       final int maxSize,
-                                                       final int maxIndexSize) {
+    public List<List<LogSegment>> groupSegmentsBySize(final Iterable<LogSegment> segments,
+                                                      final int maxSize,
+                                                      final int maxIndexSize) {
         final List<List<LogSegment>> grouped = Lists.newArrayList();
         List<LogSegment> segs = Lists.newArrayList(segments);
         while (!segs.isEmpty()) {
@@ -311,10 +311,10 @@ public class Cleaner {
      * @param map   The map in which to store the mappings
      * @return The final offset the map covers
      */
-    private long buildOffsetMap(final Log log,
-                                final long start,
-                                final long end,
-                                final OffsetMap map) throws IOException, OffsetMapException, LogCleaningAbortedException {
+    public long buildOffsetMap(final Log log,
+                               final long start,
+                               final long end,
+                               final OffsetMap map) throws IOException, OffsetMapException, LogCleaningAbortedException {
         map.clear();
         final List<LogSegment> dirty = Lists.newArrayList(log.logSegments(start, end));
         LOG.info(String.format("Building offset map for log %s for %d segments in offset range [%d, %d).", log.name(), dirty.size(), start, end));
