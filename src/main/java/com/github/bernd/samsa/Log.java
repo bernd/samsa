@@ -590,7 +590,7 @@ public class Log {
 
         List<LogSegment> deletable = Lists.newArrayList();
         for (LogSegment segment : logSegments()) {
-            if (predicate.apply(segment) && segment.getBaseOffset() != lastSegment.getBaseOffset() || segment.size() > 0) {
+            if (predicate.apply(segment) && (segment.getBaseOffset() != lastSegment.getBaseOffset() || segment.size() > 0)) {
                 deletable.add(segment);
             }
         }
