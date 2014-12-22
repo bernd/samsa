@@ -95,5 +95,14 @@ public class MockScheduler implements Scheduler {
                 return 1;
             }
         }
+
+        @Override
+        public String toString() {
+            return "MockTask{" +
+                    "name='" + name + '\'' +
+                    ", nextExecution=" + nextExecution +
+                    ", period=" + period +
+                    '}';
+        }
     }
 }

@@ -1,8 +1,10 @@
 package com.github.bernd.samsa;
 
+import com.github.bernd.samsa.cleaner.CleanerConfigBuilder;
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.github.bernd.samsa.message.ByteBufferMessageSet;
 import com.github.bernd.samsa.message.Message;
+import com.github.bernd.samsa.utils.MockTime;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -12,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -137,5 +141,24 @@ public class TestUtils {
 
     public static ByteBufferMessageSet singleMessageSet(final byte[] payload) throws IOException {
         return singleMessageSet(payload, CompressionCodec.NONE);
+    }
+
+    /**
+     * Create new LogManager instance with default configuration for testing
+     */
+    public static LogManager createLogManager(final List<File> logDirs,
+                                              final LogConfig defaultConfig,
+                                              final MockTime time) throws Throwable {
+        return new LogManager(
+                logDirs,
+                new HashMap<String, LogConfig>(),
+                defaultConfig,
+                new CleanerConfigBuilder().enableCleaner(false).build(),
+                4,
+                1000L,
+                10000L,
+                1000L,
+                time.scheduler,
+                new BrokerState(), time);
     }
 }

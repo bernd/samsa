@@ -691,4 +691,8 @@ public class LogManager {
             }
         }
     }
+
+    public List<File> getLogDirs() {
+        return logDirs;
+    }
 }

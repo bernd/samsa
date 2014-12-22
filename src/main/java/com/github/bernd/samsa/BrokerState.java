@@ -66,6 +66,10 @@ public class BrokerState {
         this.currentState = state;
     }
 
+    public BrokerState() {
+        this(States.NOT_RUNNING);
+    }
+
     public States getCurrentState() {
         return currentState;
     }

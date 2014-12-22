@@ -559,6 +559,10 @@ public class Log {
         return new FetchDataInfo(nextOffsetMetadata, MessageSet.EMPTY);
     }
 
+    public FetchDataInfo read(final long startOffset, final int maxLength) throws OffsetOutOfRangeException, IOException {
+        return read(startOffset, maxLength, Optional.<Long>absent());
+    }
+
     /**
      * Given a message offset, find its corresponding offset metadata in the log.
      * If the message offset is out of range, return unknown offset metadata
