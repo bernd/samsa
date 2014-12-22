@@ -82,6 +82,10 @@ public class LogCleaner {
         }
     }
 
+    public ConcurrentMap<TopicAndPartition, Log> getLogs() {
+        return logs;
+    }
+
     /**
      * Start the background cleaning
      */

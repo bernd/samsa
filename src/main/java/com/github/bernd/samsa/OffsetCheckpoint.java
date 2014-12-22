@@ -1,6 +1,6 @@
 package com.github.bernd.samsa;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -77,14 +77,14 @@ public class OffsetCheckpoint {
             try {
                 String line = reader.readLine();
                 if (line == null) {
-                    return ImmutableMap.of();
+                    return Maps.newHashMap();
                 }
                 final int version = Integer.parseInt(line);
                 switch (version) {
                     case 0:
                         line = reader.readLine();
                         if (line == null) {
-                            return ImmutableMap.of();
+                            return Maps.newHashMap();
                         }
                         int expectedSize = Integer.parseInt(line);
                         final Map<TopicAndPartition, Long> offsets = new HashMap<>();
