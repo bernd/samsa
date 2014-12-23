@@ -12,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ public class TestUtils {
 
     private static final String IO_TMP_DIR = System.getProperty("java.io.tmpdir");
     public static final Random RANDOM = new Random();
+    public static final Random SEEDED_RANDOM = new Random(192348092834L);
 
     /**
      * Check that the buffer content from buffer.position() to buffer.limit() is equal
@@ -144,11 +147,29 @@ public class TestUtils {
         return singleMessageSet(payload, CompressionCodec.NONE);
     }
 
+    /**
+     * Generate an array of random bytes
+     * @param numBytes The size of the array
+     */
+    public static byte[] randomBytes(final int numBytes) {
+        byte[] bytes = new byte[numBytes];
+        SEEDED_RANDOM.nextBytes(bytes);
+        return bytes;
+    }
+
     public static void writeNonsenseToFile(final File fileName, final long position, final int size) throws IOException {
         final RandomAccessFile file = new RandomAccessFile(fileName, "rw");
         file.seek(position);
         for(int i = 0; i < size; i++) {
             file.writeByte(RANDOM.nextInt(255));
+        }
+        file.close();
+    }
+
+    public static void appendNonsenseToFile(final File fileName, final int size) throws IOException {
+        final OutputStream file = new FileOutputStream(fileName, true);
+        for(int i = 0; i < size; i++) {
+            file.write(RANDOM.nextInt(255));
         }
         file.close();
     }
