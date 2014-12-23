@@ -165,7 +165,7 @@ public class LogSegment {
 
         // calculate the length of the message set to read based on whether or not they gave us a maxOffset
         int length;
-        if (maxOffset.isPresent()) {
+        if (!maxOffset.isPresent()) {
             // no max offset, just use the max size they gave unmolested
             length = maxSize;
         } else {
