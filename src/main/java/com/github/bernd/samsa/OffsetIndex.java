@@ -56,6 +56,10 @@ public class OffsetIndex {
      */
     private volatile int maxEntries;
 
+    public OffsetIndex(final File file, final long baseOffset) throws IOException {
+        this(file, baseOffset, -1);
+    }
+
     public OffsetIndex(final File file, final long baseOffset, final int maxIndexSize) throws IOException {
         this.file = file;
         this.baseOffset = baseOffset;
@@ -451,11 +455,27 @@ public class OffsetIndex {
         return lastOffset;
     }
 
+    public long getBaseOffset() {
+        return baseOffset;
+    }
+
     public File getFile() {
         return file;
     }
 
     public int getMaxEntries() {
         return maxEntries;
+    }
+
+    @Override
+    public String toString() {
+        return "OffsetIndex{" +
+                "lastOffset=" + lastOffset +
+                ", baseOffset=" + baseOffset +
+                ", maxIndexSize=" + maxIndexSize +
+                ", size=" + size.get() +
+                ", maxEntries=" + maxEntries +
+                ", file=" + file +
+                '}';
     }
 }
