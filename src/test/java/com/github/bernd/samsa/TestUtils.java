@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +28,7 @@ public class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
     private static final String IO_TMP_DIR = System.getProperty("java.io.tmpdir");
-    private static final Random RANDOM = new Random();
+    public static final Random RANDOM = new Random();
 
     /**
      * Check that the buffer content from buffer.position() to buffer.limit() is equal
@@ -141,6 +142,15 @@ public class TestUtils {
 
     public static ByteBufferMessageSet singleMessageSet(final byte[] payload) throws IOException {
         return singleMessageSet(payload, CompressionCodec.NONE);
+    }
+
+    public static void writeNonsenseToFile(final File fileName, final long position, final int size) throws IOException {
+        final RandomAccessFile file = new RandomAccessFile(fileName, "rw");
+        file.seek(position);
+        for(int i = 0; i < size; i++) {
+            file.writeByte(RANDOM.nextInt(255));
+        }
+        file.close();
     }
 
     /**
