@@ -95,7 +95,7 @@ public class LogSegment {
      * @param offset   The first offset in the message set.
      * @param messages The messages to append.
      */
-    public void append(final long offset, final ByteBufferMessageSet messages) {
+    public void append(final long offset, final ByteBufferMessageSet messages) throws IOException {
         if (messages.sizeInBytes() > 0) {
             LOG.trace(String.format("Inserting %d bytes at offset %d at position %d", messages.sizeInBytes(), offset, log.sizeInBytes()));
             // append an entry to the index (if needed)

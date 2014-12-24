@@ -1,10 +1,15 @@
 package com.github.bernd.samsa.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public abstract class IteratorTemplate<T> implements Iterator<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(IteratorTemplate.class);
+
     private enum State {
         DONE, READY, NOT_READY, FAILED;
     }
@@ -44,7 +49,7 @@ public abstract class IteratorTemplate<T> implements Iterator<T> {
                     return maybeComputeNext();
                 } catch (IOException e) {
                     // TODO What to do with the exception here?
-                    e.printStackTrace();
+                    LOG.error(e.getMessage(), e);
                     return false;
                 }
         }

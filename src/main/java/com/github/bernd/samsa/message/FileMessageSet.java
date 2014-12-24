@@ -242,7 +242,7 @@ public class FileMessageSet extends MessageSet {
     /**
      * Append these messages to the message set
      */
-    public void append(final ByteBufferMessageSet messages) {
+    public void append(final ByteBufferMessageSet messages) throws IOException {
         int written = messages.writeTo(channel, 0, messages.sizeInBytes());
         _size.getAndAdd(written);
     }

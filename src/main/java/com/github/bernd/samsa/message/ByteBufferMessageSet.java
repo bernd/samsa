@@ -136,17 +136,12 @@ public class ByteBufferMessageSet extends MessageSet {
      * Write the messages in this set to the given channel
      */
     @Override
-    public int writeTo(GatheringByteChannel channel, long offset, int maxSize) {
+    public int writeTo(GatheringByteChannel channel, long offset, int maxSize) throws IOException {
         // Ignore offset and size from input. We just want to write the whole buffer to the channel.
         buffer.mark();
         int written = 0;
         while (written < sizeInBytes()) {
-            try {
-                written += channel.write(buffer);
-            } catch (IOException e) {
-                // TODO Handle exception?
-                e.printStackTrace();
-            }
+            written += channel.write(buffer);
         }
         buffer.reset();
         return written;
@@ -182,7 +177,7 @@ public class ByteBufferMessageSet extends MessageSet {
             private Iterator<MessageAndOffset> innerIter = null;
 
             @Override
-            protected MessageAndOffset makeNext() {
+            protected MessageAndOffset makeNext() throws IOException {
                 if (isShallow) {
                     return makeNextOuter();
                 } else {
@@ -198,7 +193,7 @@ public class ByteBufferMessageSet extends MessageSet {
                 return innerIter == null || !innerIter.hasNext();
             }
 
-            public MessageAndOffset makeNextOuter() {
+            public MessageAndOffset makeNextOuter() throws IOException {
                 // if there isn't at least an offset and size, we are done
                 if (topIter.remaining() < 12) {
                     return allDone();
@@ -228,12 +223,8 @@ public class ByteBufferMessageSet extends MessageSet {
                             innerIter = null;
                             return new MessageAndOffset(newMessage, offset);
                         default:
-                            try {
-                                innerIter = ByteBufferMessageSet.decompress(newMessage).internalIterator(false);
-                            } catch (IOException e) {
-                                // TODO Ignore?
-                                e.printStackTrace();
-                            }
+                            innerIter = ByteBufferMessageSet.decompress(newMessage).internalIterator(false);
+
                             if (!innerIter.hasNext()) {
                                 innerIter = null;
                             }
