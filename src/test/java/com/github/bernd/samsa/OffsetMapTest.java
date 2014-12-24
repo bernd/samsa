@@ -45,14 +45,14 @@ public class OffsetMapTest {
             map.put(key(i), i);
         }
         int misses = 0;
-        for (int i = 0; i < items; i++){
+        for (int i = 0; i < items; i++) {
             assertEquals((long) i, map.get(key(i)));
         }
         return map;
     }
 
     public static void main(String[] args) throws OffsetMapException, NoSuchAlgorithmException {
-        if(args.length != 2) {
+        if (args.length != 2) {
             System.err.println("USAGE: java OffsetMapTest size load");
             System.exit(1);
         }

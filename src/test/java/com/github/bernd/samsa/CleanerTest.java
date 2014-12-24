@@ -333,7 +333,7 @@ public class CleanerTest {
             assertEquals(map.get(key(i)), (long) i, "Should find all the keys");
         }
         assertEquals(map.get(key(start - 1)), -1L, "Should not find a value too small");
-        assertEquals(map.get(key(end)), -1L,  "Should not find a value too large");
+        assertEquals(map.get(key(end)), -1L, "Should not find a value too large");
     }
 
     public Log makeLog(final File dir, final LogConfig config) throws IOException {
@@ -351,7 +351,7 @@ public class CleanerTest {
     }
 
     private Iterable<Long> writeToLog(final Log log, final Iterable<Pair<Integer, Integer>> seq) throws IOException, MessageSetSizeTooLargeException, SamsaStorageException, MessageSizeTooLargeException, InvalidMessageSizeException {
-        final List<Long> list =  Lists.newArrayList();
+        final List<Long> list = Lists.newArrayList();
 
         for (final Pair<Integer, Integer> pair : seq) {
             list.add(log.append(message(pair.getLeft(), pair.getRight())).firstOffset);
@@ -359,6 +359,7 @@ public class CleanerTest {
 
         return list;
     }
+
     public ByteBuffer key(final int id) {
         return ByteBuffer.wrap(String.valueOf(id).getBytes());
     }

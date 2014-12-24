@@ -95,12 +95,12 @@ public class SchedulerTest {
         mockTime.scheduler.schedule("test1", new Runnable() {
             @Override
             public void run() {
-                 mockTime.scheduler.schedule("test2", new Runnable() {
-                     @Override
-                     public void run() {
-                         counter2.getAndIncrement();
-                     }
-                 }, 0, -1, TimeUnit.MILLISECONDS);
+                mockTime.scheduler.schedule("test2", new Runnable() {
+                    @Override
+                    public void run() {
+                        counter2.getAndIncrement();
+                    }
+                }, 0, -1, TimeUnit.MILLISECONDS);
             }
         }, 1, -1, TimeUnit.MILLISECONDS);
 
@@ -116,7 +116,7 @@ public class SchedulerTest {
             public void run() {
                 counter1.getAndIncrement();
             }
-        },  0, -1, TimeUnit.MILLISECONDS);
+        }, 0, -1, TimeUnit.MILLISECONDS);
 
         TestUtils.retry(30000, new Runnable() {
             @Override

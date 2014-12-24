@@ -130,7 +130,7 @@ public class LogManagerTest {
 
         // add a bunch of messages that should be larger than the retentionSize
         final int numMessages = 200;
-        for(int i = 0; i < numMessages; i++) {
+        for (int i = 0; i < numMessages; i++) {
             final ByteBufferMessageSet set = TestUtils.singleMessageSet("test".getBytes());
             final LogAppendInfo info = log.append(set);
             offset = info.firstOffset;
@@ -165,7 +165,7 @@ public class LogManagerTest {
         logManager.startup();
         final Log log = logManager.createLog(new TopicAndPartition(name, 0), config);
         final long lastFlush = log.lastFlushTime();
-        for(int i = 0; i < 200; i++) {
+        for (int i = 0; i < 200; i++) {
             final ByteBufferMessageSet set = TestUtils.singleMessageSet("test".getBytes());
             log.append(set);
         }
@@ -186,7 +186,7 @@ public class LogManagerTest {
         logManager = createLogManager(dirs);
 
         // verify that logs are always assigned to the least loaded partition
-        for(int partition = 0; partition < 20; partition++) {
+        for (int partition = 0; partition < 20; partition++) {
             logManager.createLog(new TopicAndPartition("test", partition), logConfig);
             assertEquals(logManager.allLogs().size(), partition + 1, "We should have created the right number of logs");
 

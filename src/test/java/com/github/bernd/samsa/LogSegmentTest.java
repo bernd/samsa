@@ -143,7 +143,7 @@ public class LogSegmentTest {
     public void testTruncate() throws Exception {
         final LogSegment seg = createSegment(40);
         long offset = 40;
-        for(int i = 0; i < 30; i++) {
+        for (int i = 0; i < 30; i++) {
             final ByteBufferMessageSet ms1 = messages(offset, "hello");
             seg.append(offset, ms1);
             final ByteBufferMessageSet ms2 = messages(offset + 1, "hello");
@@ -207,13 +207,13 @@ public class LogSegmentTest {
     @Test
     public void testRecoveryFixesCorruptIndex() throws Exception {
         final LogSegment seg = createSegment(0);
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             seg.append(i, messages(i, String.valueOf(i)));
         }
         final File indexFile = seg.getIndex().getFile();
         TestUtils.writeNonsenseToFile(indexFile, 5, (int) indexFile.length());
         seg.recover(64 * 1024);
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             assertEquals(Iterables.getFirst(seg.read(i, Optional.of(i + 1L), 1024).getMessageSet(), null).getOffset(), i);
         }
     }
@@ -224,9 +224,9 @@ public class LogSegmentTest {
     @Test
     public void testRecoveryWithCorruptMessage() throws Exception, SamsaStorageException {
         final int messagesAppended = 20;
-        for(int iteration = 0; iteration < 10; iteration++) {
+        for (int iteration = 0; iteration < 10; iteration++) {
             final LogSegment seg = createSegment(0);
-            for(int i = 0; i < messagesAppended; i++) {
+            for (int i = 0; i < messagesAppended; i++) {
                 seg.append(i, messages(i, String.valueOf(i)));
             }
             final int offsetToBeginCorruption = TestUtils.RANDOM.nextInt(messagesAppended);

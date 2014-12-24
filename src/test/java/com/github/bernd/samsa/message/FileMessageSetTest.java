@@ -132,7 +132,7 @@ public class FileMessageSetTest extends BaseMessageSetTestCases {
                 "Should be able to find second message when starting from 0");
         assertEquals(messageSet.searchFor(1, position),
                 new OffsetPosition(1L, position),
-        "Should be able to find second message starting from its offset");
+                "Should be able to find second message starting from its offset");
 
         final List<MessageAndOffset> list = Lists.newArrayList(messageSet);
 
@@ -141,7 +141,7 @@ public class FileMessageSetTest extends BaseMessageSetTestCases {
         assertEquals(messageSet.searchFor(3, position),
                 new OffsetPosition(50L, position),
                 "Should be able to find fourth message from a non-existant offset");
-        assertEquals(messageSet.searchFor(50,  position),
+        assertEquals(messageSet.searchFor(50, position),
                 new OffsetPosition(50L, position),
                 "Should be able to find fourth message by correct offset");
     }

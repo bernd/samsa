@@ -107,7 +107,7 @@ public class LogCleanerIntegrationTest {
             for (int key = 0; key < numKeys; key++) {
                 int count = counter;
                 log.append(TestUtils.singleMessageSet(String.valueOf(counter).getBytes(),
-                        CompressionCodec.NONE, String.valueOf(key).getBytes()),
+                                CompressionCodec.NONE, String.valueOf(key).getBytes()),
                         true);
                 counter += 1;
                 map.put(key, count);
@@ -124,7 +124,7 @@ public class LogCleanerIntegrationTest {
                                    final String defaultPolicy,
                                    final Map<String, String> policyOverrides) throws IOException, NoSuchAlgorithmException {
         // create partitions and add them to the pool
-        final ConcurrentMap<TopicAndPartition,Log> logs = new ConcurrentHashMap<>();
+        final ConcurrentMap<TopicAndPartition, Log> logs = new ConcurrentHashMap<>();
 
         for (int i = 0; i < parts; i++) {
             final File dir = new File(logDir, "log-" + i);

@@ -93,7 +93,7 @@ public class OffsetIndexTest {
     @Test
     public void lookupExtremeCases() throws Exception {
         assertEquals(idx.lookup(idx.getBaseOffset()), new OffsetPosition(idx.getBaseOffset(), 0), "Lookup on empty file");
-        for(int i = 0; i < idx.getMaxEntries(); i++ ) {
+        for (int i = 0; i < idx.getMaxEntries(); i++) {
             idx.append(idx.getBaseOffset() + i + 1, i);
         }
         // check first and last entry
@@ -104,7 +104,7 @@ public class OffsetIndexTest {
 
     @Test
     public void appendTooMany() throws Exception {
-        for(int i = 0; i < idx.getMaxEntries(); i++) {
+        for (int i = 0; i < idx.getMaxEntries(); i++) {
             final long offset = idx.getBaseOffset() + i + 1;
             idx.append(offset, i);
         }
@@ -136,7 +136,7 @@ public class OffsetIndexTest {
     public void truncate() throws Exception {
         final OffsetIndex idx = new OffsetIndex(nonExistantTempFile(), 0L, 10 * 8);
         idx.truncate();
-        for(int i = 1; i < 10; i++) {
+        for (int i = 1; i < 10; i++) {
             idx.append(i, i);
         }
 
@@ -166,7 +166,7 @@ public class OffsetIndexTest {
         idx.append(0, 0);
     }
 
-    public <T> void assertWriteFails(final String message, final OffsetIndex idx, final int offset, T  klass) {
+    public <T> void assertWriteFails(final String message, final OffsetIndex idx, final int offset, T klass) {
         try {
             idx.append(offset, 1);
             assertTrue(false, message);

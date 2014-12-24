@@ -24,9 +24,9 @@ public class MessageTest {
         public final Message message;
 
         public MessageTestVal(final byte[] key,
-                                     final byte[] payload,
-                                     final CompressionCodec codec,
-                                     final Message message) {
+                              final byte[] payload,
+                              final CompressionCodec codec,
+                              final Message message) {
             this.key = key;
             this.payload = payload;
             this.codec = codec;
@@ -71,14 +71,14 @@ public class MessageTest {
     @Test
     public void testFieldValues() throws Exception {
         for (final MessageTestVal val : messages) {
-            if(val.payload == null) {
+            if (val.payload == null) {
                 assertTrue(val.message.isNull());
                 assertEquals(val.message.payload(), null, "Payload should be null");
             } else {
                 TestUtils.checkEquals(val.message.payload(), ByteBuffer.wrap(val.payload));
             }
             assertEquals(val.message.magic(), Message.CURRENT_MAGIC_VALUE);
-            if(val.message.hasKey()) {
+            if (val.message.hasKey()) {
                 TestUtils.checkEquals(val.message.key(), ByteBuffer.wrap(val.key));
             } else {
                 assertEquals(val.message.key(), null);
@@ -101,7 +101,7 @@ public class MessageTest {
 
     @Test
     public void testEquality() throws Exception {
-        for(final MessageTestVal val : messages) {
+        for (final MessageTestVal val : messages) {
             assertFalse(val.message.equals(null), "Should not equal null");
             assertFalse(val.message.equals("asdf"), "Should not equal a random string");
             assertTrue(val.message.equals(val.message), "Should equal itself");
@@ -114,10 +114,10 @@ public class MessageTest {
     public void testIsHashable() throws Exception {
         // this is silly, but why not
         final HashMap<Message, Message> m = new HashMap<>();
-        for(final MessageTestVal val : messages) {
+        for (final MessageTestVal val : messages) {
             m.put(val.message, val.message);
         }
-        for(final MessageTestVal val : messages) {
+        for (final MessageTestVal val : messages) {
             assertEquals(val.message, m.get(val.message));
         }
     }

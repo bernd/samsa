@@ -76,7 +76,7 @@ public class LogTest {
         log.append(set);
         assertEquals(log.numberOfSegments(), 2, "Log rolls on this append since time has expired.");
 
-        for(int numSegments = 3;  numSegments < 5; numSegments++) {
+        for (int numSegments = 3; numSegments < 5; numSegments++) {
             time.sleep(log.getConfig().getSegmentMs() + 1);
             log.append(set);
             assertEquals(log.numberOfSegments(), numSegments, "Changing time beyond rollMs and appending should create a new segment.");
@@ -156,10 +156,10 @@ public class LogTest {
             messages.add(new Message(String.valueOf(i).getBytes()));
         }
 
-        for(int i = 0; i < messages.size(); i++){
+        for (int i = 0; i < messages.size(); i++) {
             log.append(new ByteBufferMessageSet(CompressionCodec.NONE, Lists.newArrayList(messages.get(i))));
         }
-        for(int i = 0; i < messages.size(); i++) {
+        for (int i = 0; i < messages.size(); i++) {
             final MessageAndOffset read = Iterables.getFirst(log.read(i, 100, Optional.of(i + 1L)).getMessageSet(), null);
             assertEquals(read.getOffset(), i, "Offset read should match order appended.");
             assertEquals(read.getMessage(), messages.get(i), "Message should match appended.");
@@ -189,13 +189,13 @@ public class LogTest {
         }
 
         // now test the case that we give the offsets and use non-sequential offsets
-        for(int i = 0; i < messages.size(); i++) {
+        for (int i = 0; i < messages.size(); i++) {
             log.append(new ByteBufferMessageSet(CompressionCodec.NONE,
-                    new AtomicLong(messageIds.get(i)),
-                    Lists.<Message>newArrayList(messages.get(i))),
+                            new AtomicLong(messageIds.get(i)),
+                            Lists.<Message>newArrayList(messages.get(i))),
                     false);
         }
-        for(int i = 50; i < Collections.max(messageIds); i++) {
+        for (int i = 50; i < Collections.max(messageIds); i++) {
             final int num = i;
             final int idx = Iterables.indexOf(messageIds, new Predicate<Integer>() {
                 @Override
@@ -275,7 +275,7 @@ public class LogTest {
 
         /* do successive reads to ensure all our messages are there */
         long offset = 0L;
-        for(int i = 0; i < numMessages; i++) {
+        for (int i = 0; i < numMessages; i++) {
             final MessageSet messages = log.read(offset, 1024 * 1024).getMessageSet();
             assertEquals(Iterables.get(messages, 0).getOffset(), offset, "Offsets not equal");
             assertEquals(Iterables.get(messages, 0).getMessage(),
@@ -330,7 +330,7 @@ public class LogTest {
             logDir.mkdirs();
             // first test a log segment starting at 0
             final Log log = new Log(logDir, logConfigBuilder.segmentSize(100).build(), 0L, time.scheduler, time);
-            for(int i = 0; i < messagesToAppend; i++) {
+            for (int i = 0; i < messagesToAppend; i++) {
                 log.append(TestUtils.singleMessageSet(String.valueOf(i).getBytes()));
             }
 
@@ -363,7 +363,7 @@ public class LogTest {
     }
 
     /**
-     *  MessageSet size shouldn't exceed the config.segmentSize, check that it is properly enforced by
+     * MessageSet size shouldn't exceed the config.segmentSize, check that it is properly enforced by
      * appending a message set larger than the config.segmentSize setting and checking that an exception is thrown.
      */
     @Test
@@ -391,7 +391,7 @@ public class LogTest {
     @Test
     public void testMessageSizeCheck() throws Exception {
         final ByteBufferMessageSet first = new ByteBufferMessageSet(CompressionCodec.NONE,
-                Lists.newArrayList(new Message ("You".getBytes()), new Message("bethe".getBytes())));
+                Lists.newArrayList(new Message("You".getBytes()), new Message("bethe".getBytes())));
         final ByteBufferMessageSet second = new ByteBufferMessageSet(CompressionCodec.NONE,
                 Lists.newArrayList(new Message("change".getBytes())));
 
@@ -427,7 +427,7 @@ public class LogTest {
         final int indexInterval = 3 * messageSize;
         final LogConfig config = logConfigBuilder.segmentSize(segmentSize).indexInterval(indexInterval).maxIndexSize(4096).build();
         Log log = new Log(logDir, config, 0L, time.scheduler, time);
-        for(int i = 0; i <  numMessages; i++) {
+        for (int i = 0; i < numMessages; i++) {
             log.append(TestUtils.singleMessageSet(TestUtils.randomBytes(messageSize)));
         }
         assertEquals(log.logEndOffset(), numMessages,
@@ -446,7 +446,7 @@ public class LogTest {
 
         // test recovery case
         log = new Log(logDir, config, 0L, time.scheduler, time);
-        assertEquals(log.logEndOffset(),numMessages,
+        assertEquals(log.logEndOffset(), numMessages,
                 String.format("Should have %d messages when log is reopened with recovery", numMessages));
         assertEquals(log.activeSegment().getIndex().getLastOffset(), lastIndexOffset, "Should have same last index offset as before.");
         assertEquals(log.activeSegment().getIndex().entries(), numIndexEntries, "Should have same number of index entries as before.");
@@ -462,7 +462,7 @@ public class LogTest {
         final int numMessages = 200;
         final LogConfig config = logConfigBuilder.segmentSize(200).indexInterval(1).build();
         Log log = new Log(logDir, config, 0L, time.scheduler, time);
-        for(int i = 0; i < numMessages; i++) {
+        for (int i = 0; i < numMessages; i++) {
             log.append(TestUtils.singleMessageSet(TestUtils.randomBytes(10)));
         }
         final Iterable<File> indexFiles = Iterables.transform(log.logSegments(), new Function<LogSegment, File>() {
@@ -594,7 +594,7 @@ public class LogTest {
         assertFalse(bogusIndex2.exists(), "The second index file should have been deleted.");
 
         // check that we can append to the log
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             log.append(set);
         }
 
@@ -613,7 +613,7 @@ public class LogTest {
         Log log = new Log(logDir, config, 0L, time.scheduler, time);
 
         // add enough messages to roll over several segments then close and re-open and attempt to truncate
-        for(int i = 0; i <  100; i++) {
+        for (int i = 0; i < 100; i++) {
             log.append(set);
         }
         log.close();
@@ -635,7 +635,7 @@ public class LogTest {
         final Log log = new Log(logDir, config, 0L, time.scheduler, time);
 
         // append some messages to create some segments
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             log.append(set);
         }
 
@@ -705,7 +705,7 @@ public class LogTest {
         Log log = new Log(logDir, config, 0L, time.scheduler, time);
 
         // append some messages to create some segments
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             log.append(set);
         }
 
@@ -734,15 +734,15 @@ public class LogTest {
     @Test
     public void testCorruptLog() throws Exception, MessageSetSizeTooLargeException, SamsaStorageException, MessageSizeTooLargeException, InvalidMessageSizeException {
         // append some messages to create some segments
-        final LogConfig config = logConfigBuilder.indexInterval(1).maxMessageSize(64*1024).segmentSize(1000).build();
+        final LogConfig config = logConfigBuilder.indexInterval(1).maxMessageSize(64 * 1024).segmentSize(1000).build();
         final ByteBufferMessageSet set = TestUtils.singleMessageSet("test".getBytes());
         final long recoveryPoint = 50L;
-        for(int iteration = 0; iteration < 50; iteration++) {
+        for (int iteration = 0; iteration < 50; iteration++) {
             // create a log and write some messages to it
             logDir.mkdirs();
             Log log = new Log(logDir, config, 0L, time.scheduler, time);
             final int numMessages = 50 + TestUtils.RANDOM.nextInt(50);
-            for(int i = 0; i < numMessages; i++) {
+            for (int i = 0; i < numMessages; i++) {
                 log.append(set);
             }
 
@@ -759,7 +759,7 @@ public class LogTest {
 
             // attempt recovery
             log = new Log(logDir, config, recoveryPoint, time.scheduler, time);
-            assertEquals(log.logEndOffset(),  numMessages);
+            assertEquals(log.logEndOffset(), numMessages);
 
             final List<MessageAndOffset> messages = Lists.newArrayList();
             for (final LogSegment segment : log.logSegments()) {

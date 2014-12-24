@@ -63,7 +63,7 @@ public class TestUtils {
                 expected.next();
                 length1 += 1;
             }
-            assertFalse(true, "Iterators have uneven length-- first has more: "+length1 + " > " + length);
+            assertFalse(true, "Iterators have uneven length-- first has more: " + length1 + " > " + length);
         }
 
         // check if the actual iterator was longer
@@ -73,7 +73,7 @@ public class TestUtils {
                 actual.next();
                 length2 += 1;
             }
-            assertFalse(true, "Iterators have uneven length-- second has more: "+length2 + " > " + length);
+            assertFalse(true, "Iterators have uneven length-- second has more: " + length2 + " > " + length);
         }
     }
 
@@ -130,6 +130,7 @@ public class TestUtils {
 
     /**
      * Wrap the message in a message set
+     *
      * @param payload The bytes of the message
      */
     public static ByteBufferMessageSet singleMessageSet(final byte[] payload,
@@ -149,6 +150,7 @@ public class TestUtils {
 
     /**
      * Generate an array of random bytes
+     *
      * @param numBytes The size of the array
      */
     public static byte[] randomBytes(final int numBytes) {
@@ -160,7 +162,7 @@ public class TestUtils {
     public static void writeNonsenseToFile(final File fileName, final long position, final int size) throws IOException {
         final RandomAccessFile file = new RandomAccessFile(fileName, "rw");
         file.seek(position);
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             file.writeByte(RANDOM.nextInt(255));
         }
         file.close();
@@ -168,7 +170,7 @@ public class TestUtils {
 
     public static void appendNonsenseToFile(final File fileName, final int size) throws IOException {
         final OutputStream file = new FileOutputStream(fileName, true);
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             file.write(RANDOM.nextInt(255));
         }
         file.close();

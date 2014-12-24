@@ -8,14 +8,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * A mock scheduler that executes tasks synchronously using a mock time instance. Tasks are executed synchronously when
  * the time is advanced. This class is meant to be used in conjunction with MockTime.
- *
+ * <p/>
  * Example usage
  * <code>
- *   val time = new MockTime
- *   time.scheduler.schedule("a task", println("hello world: " + time.milliseconds), delay = 1000)
- *   time.sleep(1001) // this should cause our scheduled task to fire
+ * val time = new MockTime
+ * time.scheduler.schedule("a task", println("hello world: " + time.milliseconds), delay = 1000)
+ * time.sleep(1001) // this should cause our scheduled task to fire
  * </code>
- *
+ * <p/>
  * Incrementing the time to the exact next execution time of a task will result in that task executing (it as if execution itself takes no time).
  */
 public class MockScheduler implements Scheduler {
@@ -55,12 +55,12 @@ public class MockScheduler implements Scheduler {
         synchronized (this) {
             final long now = time.milliseconds();
 
-            while(!tasks.isEmpty() && tasks.peek().nextExecution <= now) {
+            while (!tasks.isEmpty() && tasks.peek().nextExecution <= now) {
                 /* pop and execute the task with the lowest next execution time */
                 final MockTask curr = tasks.remove();
                 curr.fun.run();
                 /* if the task is periodic, reschedule it and re-enqueue */
-                if(curr.isPeriodic()) {
+                if (curr.isPeriodic()) {
                     curr.nextExecution += curr.period;
                     this.tasks.add(curr);
                 }

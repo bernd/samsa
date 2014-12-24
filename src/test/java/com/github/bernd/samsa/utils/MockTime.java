@@ -4,10 +4,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A class used for unit testing things which depend on the Time interface.
- *
+ * <p/>
  * This class never manually advances the clock, it only does so when you call
- *   sleep(ms)
- *
+ * sleep(ms)
+ * <p/>
  * It also comes with an associated scheduler instance for managing background tasks in
  * a deterministic way.
  */

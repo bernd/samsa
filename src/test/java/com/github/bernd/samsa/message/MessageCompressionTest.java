@@ -14,7 +14,7 @@ public class MessageCompressionTest {
     public void testSimpleCompressDecompress() throws Exception {
         final List<CompressionCodec> codecs = Lists.newArrayList(CompressionCodec.GZIP);
 
-        if(isSnappyAvailable()) {
+        if (isSnappyAvailable()) {
             codecs.add(CompressionCodec.SNAPPY);
         }
 
@@ -25,7 +25,7 @@ public class MessageCompressionTest {
         }
         */
 
-        for(final CompressionCodec codec : codecs) {
+        for (final CompressionCodec codec : codecs) {
             testSimpleCompressDecompress(codec);
         }
     }

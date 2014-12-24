@@ -24,7 +24,7 @@ public class IteratorTemplateTest {
 
             @Override
             protected Integer makeNext() throws IOException {
-                if(i >= list.size()) {
+                if (i >= list.size()) {
                     return allDone();
                 } else {
                     int item = list.get(i);
