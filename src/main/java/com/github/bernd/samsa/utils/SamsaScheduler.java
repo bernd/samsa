@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A scheduler based on java.util.concurrent.ScheduledThreadPoolExecutor
  * <p/>
- * It has a pool of kafka-scheduler- threads that do the actual work.
+ * It has a pool of samsa-scheduler- threads that do the actual work.
  * <p/>
  * This class is thread-safe!
  */

@@ -260,7 +260,7 @@ public class LogManager {
     /* Schedule the cleanup task to delete old logs */
         if (scheduler != null) {
             LOG.info(String.format("Starting log cleanup with a period of %d ms.", retentionCheckMs));
-            scheduler.schedule("kafka-log-retention",
+            scheduler.schedule("samsa-log-retention",
                     new Runnable() {
                         @Override
                         public void run() {
@@ -275,7 +275,7 @@ public class LogManager {
                     retentionCheckMs,
                     TimeUnit.MILLISECONDS);
             LOG.info(String.format("Starting log flusher with a default period of %d ms.", flushCheckMs));
-            scheduler.schedule("kafka-log-flusher",
+            scheduler.schedule("samsa-log-flusher",
                     new Runnable() {
                         @Override
                         public void run() {
@@ -289,7 +289,7 @@ public class LogManager {
                     INITIAL_TASK_DELAY_MS,
                     flushCheckMs,
                     TimeUnit.MILLISECONDS);
-            scheduler.schedule("kafka-recovery-point-checkpoint",
+            scheduler.schedule("samsa-recovery-point-checkpoint",
                     new Runnable() {
                         @Override
                         public void run() {
