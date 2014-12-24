@@ -3,15 +3,18 @@ package com.github.bernd.samsa.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public abstract class IteratorTemplate<T> implements Iterator<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(IteratorTemplate.class);
+/**
+ * A base class that simplifies implementing an iterator
+ * @param <T> The type of thing we are iterating over
+ */
+public abstract class AbstractIterator<T> implements Iterator<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractIterator.class);
 
     private enum State {
-        DONE, READY, NOT_READY, FAILED;
+        DONE, READY, NOT_READY, FAILED
     }
 
     private State state = State.NOT_READY;
@@ -36,28 +39,21 @@ public abstract class IteratorTemplate<T> implements Iterator<T> {
     }
 
     public boolean hasNext() {
-        if (state == State.FAILED) {
-            throw new IllegalStateException("Iterator is in failed state");
-        }
         switch (state) {
+            case FAILED:
+                throw new IllegalStateException("Iterator is in failed state");
             case DONE:
                 return false;
             case READY:
                 return true;
             default:
-                try {
-                    return maybeComputeNext();
-                } catch (IOException e) {
-                    // TODO What to do with the exception here?
-                    LOG.error(e.getMessage(), e);
-                    return false;
-                }
+                return maybeComputeNext();
         }
     }
 
-    protected abstract T makeNext() throws IOException;
+    protected abstract T makeNext();
 
-    private boolean maybeComputeNext() throws IOException {
+    private boolean maybeComputeNext() {
         state = State.FAILED;
         nextItem = makeNext();
         if (state == State.DONE) {
@@ -75,9 +71,5 @@ public abstract class IteratorTemplate<T> implements Iterator<T> {
 
     public void remove() {
         throw new UnsupportedOperationException("Removal not supported");
-    }
-
-    protected void resetState() {
-        state = State.NOT_READY;
     }
 }

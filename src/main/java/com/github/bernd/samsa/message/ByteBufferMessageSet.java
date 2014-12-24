@@ -1,8 +1,9 @@
 package com.github.bernd.samsa.message;
 
+import com.github.bernd.samsa.SamsaException;
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.github.bernd.samsa.compression.CompressionFactory;
-import com.github.bernd.samsa.utils.IteratorTemplate;
+import com.github.bernd.samsa.utils.AbstractIterator;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -172,20 +173,24 @@ public class ByteBufferMessageSet extends MessageSet {
     }
 
     private Iterator<MessageAndOffset> internalIterator(final boolean isShallow) {
-        return new IteratorTemplate<MessageAndOffset>() {
+        return new AbstractIterator<MessageAndOffset>() {
             private ByteBuffer topIter = buffer.slice();
             private Iterator<MessageAndOffset> innerIter = null;
 
             @Override
-            protected MessageAndOffset makeNext() throws IOException {
-                if (isShallow) {
-                    return makeNextOuter();
-                } else {
-                    if (innerDone()) {
+            protected MessageAndOffset makeNext() {
+                try {
+                    if (isShallow) {
                         return makeNextOuter();
                     } else {
-                        return innerIter.next();
+                        if (innerDone()) {
+                            return makeNextOuter();
+                        } else {
+                            return innerIter.next();
+                        }
                     }
+                } catch (IOException e) {
+                    throw new SamsaException(e);
                 }
             }
 

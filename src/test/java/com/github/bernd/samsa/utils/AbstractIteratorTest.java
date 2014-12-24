@@ -4,26 +4,25 @@ import com.google.common.collect.Lists;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-public class IteratorTemplateTest {
-    private IteratorTemplate<Integer> iterator;
+public class AbstractIteratorTest {
+    private AbstractIterator<Integer> iterator;
     private List<Integer> list;
 
     @BeforeMethod
     public void setUp() throws Exception {
         list = Lists.newArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
-        iterator = new IteratorTemplate<Integer>() {
+        iterator = new AbstractIterator<Integer>() {
             int i = 0;
 
             @Override
-            protected Integer makeNext() throws IOException {
+            protected Integer makeNext() {
                 if (i >= list.size()) {
                     return allDone();
                 } else {

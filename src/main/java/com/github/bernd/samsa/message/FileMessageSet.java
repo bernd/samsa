@@ -2,7 +2,7 @@ package com.github.bernd.samsa.message;
 
 import com.github.bernd.samsa.OffsetPosition;
 import com.github.bernd.samsa.SamsaException;
-import com.github.bernd.samsa.utils.IteratorTemplate;
+import com.github.bernd.samsa.utils.AbstractIterator;
 import com.github.bernd.samsa.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,45 +188,49 @@ public class FileMessageSet extends MessageSet {
      * @return The iterator.
      */
     public Iterator<MessageAndOffset> iterator(final int maxMessageSize) {
-        return new IteratorTemplate<MessageAndOffset>() {
+        return new AbstractIterator<MessageAndOffset>() {
             int location = start;
             ByteBuffer sizeOffsetBuffer = ByteBuffer.allocate(12);
 
             @Override
-            public MessageAndOffset makeNext() throws IOException {
-                if (location >= end) {
-                    return allDone();
-                }
+            public MessageAndOffset makeNext() {
+                try {
+                    if (location >= end) {
+                        return allDone();
+                    }
 
-                // read the size of the item
-                sizeOffsetBuffer.rewind();
-                channel.read(sizeOffsetBuffer, location);
+                    // read the size of the item
+                    sizeOffsetBuffer.rewind();
+                    channel.read(sizeOffsetBuffer, location);
 
-                if (sizeOffsetBuffer.hasRemaining()) {
-                    return allDone();
-                }
+                    if (sizeOffsetBuffer.hasRemaining()) {
+                        return allDone();
+                    }
 
-                sizeOffsetBuffer.rewind();
-                long offset = sizeOffsetBuffer.getLong();
-                int size = sizeOffsetBuffer.getInt();
-                if (size < Message.MIN_HEADER_SIZE) {
-                    return allDone();
-                }
-                if (size > maxMessageSize) {
-                    throw new InvalidMessageException(String.format("Message size exceeds the largest allowable message size (%d).", maxMessageSize));
-                }
+                    sizeOffsetBuffer.rewind();
+                    long offset = sizeOffsetBuffer.getLong();
+                    int size = sizeOffsetBuffer.getInt();
+                    if (size < Message.MIN_HEADER_SIZE) {
+                        return allDone();
+                    }
+                    if (size > maxMessageSize) {
+                        throw new InvalidMessageException(String.format("Message size exceeds the largest allowable message size (%d).", maxMessageSize));
+                    }
 
-                // read the item itself
-                ByteBuffer buffer = ByteBuffer.allocate(size);
-                channel.read(buffer, location + 12);
-                if (buffer.hasRemaining()) {
-                    return allDone();
-                }
-                buffer.rewind();
+                    // read the item itself
+                    ByteBuffer buffer = ByteBuffer.allocate(size);
+                    channel.read(buffer, location + 12);
+                    if (buffer.hasRemaining()) {
+                        return allDone();
+                    }
+                    buffer.rewind();
 
-                // increment the location and return the item
-                location += size + 12;
-                return new MessageAndOffset(new Message(buffer), offset);
+                    // increment the location and return the item
+                    location += size + 12;
+                    return new MessageAndOffset(new Message(buffer), offset);
+                } catch (IOException e) {
+                    throw new SamsaException(e);
+                }
             }
         };
     }
