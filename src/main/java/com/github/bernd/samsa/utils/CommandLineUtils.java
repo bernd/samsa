@@ -14,7 +14,7 @@ public class CommandLineUtils {
      * Check that all the listed options are present
      */
     public static void checkRequiredArgs(final OptionParser parser, final OptionSet options, final OptionSpec... required) {
-        for (final OptionSpec arg: required) {
+        for (final OptionSpec arg : required) {
             if (!options.has(arg)) {
                 printUsageAndDie(parser, "Missing required argument \"" + arg + "\"");
             }
