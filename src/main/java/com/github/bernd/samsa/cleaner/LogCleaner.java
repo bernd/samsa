@@ -2,8 +2,8 @@ package com.github.bernd.samsa.cleaner;
 
 import com.github.bernd.samsa.Log;
 import com.github.bernd.samsa.TopicAndPartition;
-import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Throttler;
+import com.github.bernd.samsa.utils.Time;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;

@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A scheduler for running jobs
- *
+ * <p/>
  * This interface controls a job scheduler that allows scheduling either repeating background jobs
  * that execute periodically or delayed one-time actions that are scheduled in the future.
  */

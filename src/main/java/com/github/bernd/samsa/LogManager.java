@@ -2,9 +2,9 @@ package com.github.bernd.samsa;
 
 import com.github.bernd.samsa.cleaner.CleanerConfig;
 import com.github.bernd.samsa.cleaner.LogCleaner;
-import com.github.bernd.samsa.utils.Time;
-import com.github.bernd.samsa.utils.Scheduler;
 import com.github.bernd.samsa.utils.FileLock;
+import com.github.bernd.samsa.utils.Scheduler;
+import com.github.bernd.samsa.utils.Time;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;

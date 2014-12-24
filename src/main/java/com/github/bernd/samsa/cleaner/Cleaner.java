@@ -12,8 +12,8 @@ import com.github.bernd.samsa.message.FileMessageSet;
 import com.github.bernd.samsa.message.Message;
 import com.github.bernd.samsa.message.MessageAndOffset;
 import com.github.bernd.samsa.message.MessageSet;
-import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Throttler;
+import com.github.bernd.samsa.utils.Time;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -146,7 +146,7 @@ public class Cleaner {
         indexFile.delete();
         final FileMessageSet messages = new FileMessageSet(logFile);
         final OffsetIndex index = new OffsetIndex(indexFile, segments.get(0).getBaseOffset(), segments.get(0).getIndex().getMaxIndexSize());
-        final LogSegment cleaned = new LogSegment(messages,index, segments.get(0).getBaseOffset(),
+        final LogSegment cleaned = new LogSegment(messages, index, segments.get(0).getBaseOffset(),
                 segments.get(0).getIndexIntervalBytes(), log.getConfig().getSegmentJitterMs(), time);
 
         try {

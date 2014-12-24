@@ -184,9 +184,10 @@ public class Utils {
 
     /**
      * Create a new thread
-     * @param name The name of the thread
+     *
+     * @param name     The name of the thread
      * @param runnable The work for the thread to do
-     * @param daemon Should the thread block JVM shutdown?
+     * @param daemon   Should the thread block JVM shutdown?
      * @return The unstarted thread
      */
     public static Thread newThread(final String name, final Runnable runnable, final boolean daemon) {
@@ -225,7 +226,8 @@ public class Utils {
 
     /**
      * Translate the given buffer into a string
-     * @param buffer The buffer to translate
+     *
+     * @param buffer   The buffer to translate
      * @param encoding The encoding to use in translating bytes to characters
      */
     public static String readString(final ByteBuffer buffer, final String encoding) throws UnsupportedEncodingException {
