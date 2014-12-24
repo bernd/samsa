@@ -21,6 +21,61 @@ The code might have some weird constructs/namings/etc because of the 1-to-1
 transliteration and can be refactored to be more Java-like.
 
 
+## Usage
+
+### Write & Read
+
+```java
+public class WriteReadTest {
+    private static final Logger LOG = LoggerFactory.getLogger(WriteReadTest.class);
+
+    public static void main(String[] args) throws Throwable {
+        final int ioThreads = 2;
+        final long flushCheckMs = TimeUnit.SECONDS.toMillis(60);
+        final long flushCheckpointMs = TimeUnit.SECONDS.toMillis(60);
+        final long retentionCheckMs = TimeUnit.SECONDS.toDays(20);
+
+        final LogConfig logConfig = new LogConfigBuilder().build();
+
+        final LogManager logManager = new LogManager(Lists.newArrayList(new File("/tmp/samsa-test")),
+                new HashMap<String, LogConfig>(),
+                logConfig,
+                new CleanerConfigBuilder().build(),
+                ioThreads, flushCheckMs, flushCheckpointMs, retentionCheckMs,
+                new SamsaScheduler(2),
+                new BrokerState(),
+                new SystemTime());
+
+        final TopicAndPartition topicAndPartition = new TopicAndPartition("test", 0);
+        final Optional<Log> logOptional = logManager.getLog(topicAndPartition);
+        final Log log;
+
+        if (logOptional.isPresent()) {
+            log = logOptional.get();
+        } else {
+            log = logManager.createLog(topicAndPartition, logConfig);
+        }
+
+        LOG.info("Initialized log at {}", logManager.getLogDirs());
+
+        final LogAppendInfo info = log.append(new ByteBufferMessageSet(CompressionCodec.NONE, Lists.newArrayList(new Message("hello world".getBytes()))));
+
+        LOG.info("Wrote message firstOffset={} lastOffset={} validBytes={}", info.firstOffset, info.lastOffset, info.validBytes);
+
+        final FetchDataInfo fetchDataInfo = log.read(info.lastOffset, info.validBytes);
+        final MessageSet messageSet = fetchDataInfo.getMessageSet();
+
+        for (final MessageAndOffset messageAndOffset : messageSet) {
+            final Message message = messageAndOffset.getMessage();
+            final long offset = messageAndOffset.getOffset();
+
+            LOG.info("Read message: \"{}\" (at {})", new String(Utils.readBytes(message.payload())), offset);
+        }
+    }
+}
+```
+
+
 ## TODO
 
 ### Compatibility Tests
