@@ -192,7 +192,7 @@ public class LogTest {
         for (int i = 0; i < messages.size(); i++) {
             log.append(new ByteBufferMessageSet(CompressionCodec.NONE,
                             new AtomicLong(messageIds.get(i)),
-                            Lists.<Message>newArrayList(messages.get(i))),
+                            Lists.newArrayList(messages.get(i))),
                     false);
         }
         for (int i = 50; i < Collections.max(messageIds); i++) {

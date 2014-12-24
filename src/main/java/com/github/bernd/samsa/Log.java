@@ -312,7 +312,6 @@ public class Log {
             int truncatedBytes = 0;
             try {
                 truncatedBytes = curr.recover(config.getMaxMessageSize());
-                ;
             } catch (InvalidOffsetException e) {
                 long startOffset = curr.getBaseOffset();
                 LOG.warn("Found invalid offset during recovery for log " + dir.getName() + ". Deleting the corrupt segment and " +

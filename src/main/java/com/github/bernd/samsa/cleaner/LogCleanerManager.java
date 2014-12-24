@@ -34,7 +34,7 @@ public class LogCleanerManager {
     private final ConcurrentMap<TopicAndPartition, Log> logs;
 
     public enum State {
-        LOG_CLEANING_IN_PROGRESS, LOG_CLEANING_ABORTED, LOG_CLEANING_PAUSED;
+        LOG_CLEANING_IN_PROGRESS, LOG_CLEANING_ABORTED, LOG_CLEANING_PAUSED
     }
 
     /* the offset checkpoints holding the last cleaned point for each log */

@@ -216,7 +216,7 @@ public class Cleaner {
                 position += size;
                 stats.readMessage(size);
                 final ByteBuffer key = entry.getMessage().key();
-                Utils.require(key != null, "Found null key in log segment %s which is marked as dedupe.".format(source.getLog().getFile().getAbsolutePath()));
+                Utils.require(key != null, String.format(source.getLog().getFile().getAbsolutePath()));
                 long foundOffset = map.get(key);
                /* two cases in which we can get rid of a message:
                 *   1) if there exists a message with the same key but higher offset

@@ -143,7 +143,7 @@ public class CleanerThread extends ShutdownableThread {
                         String.format("\tIndexed %,.1f MB in %.1f seconds (%,.1f Mb/sec, %.1f%% of total time)%n", mb(stats.mapBytesRead),
                                 stats.elapsedIndexSecs(),
                                 mb(stats.mapBytesRead) / stats.elapsedIndexSecs(),
-                                100 * ((double) stats.elapsedIndexSecs()) / stats.elapsedSecs()) +
+                                100 * stats.elapsedIndexSecs() / stats.elapsedSecs()) +
                         String.format("\tBuffer utilization: %.1f%%%n", 100 * stats.bufferUtilization) +
                         String.format("\tCleaned %,.1f MB in %.1f seconds (%,.1f Mb/sec, %.1f%% of total time)%n", mb(stats.bytesRead),
                                 stats.elapsedSecs() - stats.elapsedIndexSecs(),
