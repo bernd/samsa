@@ -200,7 +200,7 @@ public class LogManager {
                     public void run() {
                         LOG.debug("Loading log '" + logDir.getName() + "'");
 
-                        final TopicAndPartition topicPartition = Log.parseTopicPartitionName(logDir.getName());
+                        final TopicAndPartition topicPartition = Log.parseTopicPartitionName(logDir);
                         final LogConfig config = topicConfigs.containsKey(topicPartition.getTopic()) ? topicConfigs.get(topicPartition.getTopic()) : defaultConfig;
                         final Long logRecoveryPoint = recoveryPoints.containsKey(topicPartition) ? recoveryPoints.get(topicPartition) : 0L;
 

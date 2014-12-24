@@ -115,9 +115,32 @@ public class Log {
     /**
      * Parse the topic and partition out of the directory name of a log
      */
-    public static TopicAndPartition parseTopicPartitionName(final String name) {
+    public static TopicAndPartition parseTopicPartitionName(final File dir) {
+        final String name = dir.getName();
+        if (name == null || name.isEmpty() || !name.contains("-")) {
+            throwException(dir);
+        }
         final int index = name.lastIndexOf('-');
-        return new TopicAndPartition(name.substring(0, index), Integer.parseInt(name.substring(index + 1)));
+        final String topic = name.substring(0, index);
+        final String partition = name.substring(index + 1);
+        if (topic.length() < 1 || partition.length() < 1) {
+            throwException(dir);
+        }
+        return new TopicAndPartition(topic, Integer.parseInt(partition));
+    }
+
+    private static void throwException(final File dir) {
+        String canonicalPath;
+        try {
+            canonicalPath = dir.getCanonicalPath();
+        } catch (IOException e) {
+            canonicalPath = "<error: " + e.getMessage() + ">";
+        }
+
+        throw new SamsaException("Found directory " + canonicalPath + ", " +
+                "'" + dir.getName() + "' is not in the form of topic-partition\n" +
+                "If a directory does not contain Kafka topic data it should not exist in Kafka's log " +
+                "directory");
     }
 
     private final File dir;
@@ -164,7 +187,7 @@ public class Log {
 
         this.nextOffsetMetadata = new LogOffsetMetadata(activeSegment().nextOffset(),
                 activeSegment().getBaseOffset(), (int) activeSegment().size());
-        this.topicAndPartition = parseTopicPartitionName(name());
+        this.topicAndPartition = parseTopicPartitionName(dir);
 
         LOG.info(String.format("Completed load of log %s with log end offset %d", name(), logEndOffset()));
 

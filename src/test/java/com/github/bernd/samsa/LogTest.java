@@ -795,4 +795,79 @@ public class LogTest {
         assertEquals(log.logEndOffset(), recoveryPoint);
         cleanShutdownFile.delete();
     }
+
+    @Test
+    public void testParseTopicPartitionName() throws Exception {
+        final String topic = "test_topic";
+        final String partition = "143";
+        final File dir = new File(logDir + topicPartitionName(topic, partition));
+        final TopicAndPartition topicAndPartition = Log.parseTopicPartitionName(dir);
+        assertEquals(topicAndPartition.getTopic(), topic);
+        assertEquals(topicAndPartition.getPartition(), Integer.parseInt(partition));
+    }
+
+    @Test
+    public void testParseTopicPartitionNameForEmptyName() throws Exception {
+        try {
+            final File dir = new File("");
+            final TopicAndPartition topicAndPartition = Log.parseTopicPartitionName(dir);
+            assertTrue(false, "KafkaException should have been thrown for dir: " + dir.getCanonicalPath());
+        } catch (Exception e) {
+            // its GOOD!
+        }
+    }
+
+    @Test
+    public void testParseTopicPartitionNameForNull() throws Exception {
+        try {
+            final File dir = null;
+            final TopicAndPartition topicAndPartition = Log.parseTopicPartitionName(dir);
+            assertTrue(false, "KafkaException should have been thrown for dir: " + dir);
+        } catch (Exception e) {
+            // its GOOD!
+        }
+    }
+
+    @Test
+    public void testParseTopicPartitionNameForMissingSeparator() throws Exception {
+        final String topic = "test_topic";
+        final String partition = "1999";
+        final File dir = new File(logDir + File.separator + topic + partition);
+        try {
+            final TopicAndPartition topicAndPartition = Log.parseTopicPartitionName(dir);
+            assertTrue(false, "KafkaException should have been thrown for dir: " + dir.getCanonicalPath());
+        } catch (Exception e) {
+            // its GOOD!
+        }
+    }
+
+    @Test
+    public void testParseTopicPartitionNameForMissingTopic() throws Exception {
+        final String topic = "";
+        final String partition = "1999";
+        final File dir = new File(logDir + topicPartitionName(topic, partition));
+        try {
+            final TopicAndPartition topicAndPartition = Log.parseTopicPartitionName(dir);
+            assertTrue(false, "KafkaException should have been thrown for dir: " + dir.getCanonicalPath());
+        } catch (Exception e) {
+            // its GOOD!
+        }
+    }
+
+    @Test
+    public void testParseTopicPartitionNameForMissingPartition() throws Exception {
+        final String topic = "test_topic";
+        final String partition = "";
+        final File dir = new File(logDir + topicPartitionName(topic, partition));
+        try {
+            final TopicAndPartition topicAndPartition = Log.parseTopicPartitionName(dir);
+            assertTrue(false, "KafkaException should have been thrown for dir: " + dir.getCanonicalPath());
+        } catch (Exception e) {
+            // its GOOD!
+        }
+    }
+
+    private String topicPartitionName(final String topic, final String partition) {
+        return File.separator + topic + "-" + partition;
+    }
 }
