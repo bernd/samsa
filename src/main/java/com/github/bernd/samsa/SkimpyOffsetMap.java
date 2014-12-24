@@ -148,6 +148,13 @@ public class SkimpyOffsetMap implements OffsetMap {
         return entries;
     }
 
+    /**
+     * The rate of collisions in the lookups
+     */
+    public double getCollisionRate() {
+        return (probes - lookups) / (double) lookups;
+    }
+
     @Override
     public double getUtilization() {
         return (probes - lookups) / (double) lookups;
