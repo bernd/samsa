@@ -48,34 +48,34 @@ public class Log {
     /**
      * a log file
      */
-    public static String LOG_FILE_SUFFIX = ".log";
+    public static final String LOG_FILE_SUFFIX = ".log";
 
     /**
      * an index file
      */
-    public static String INDEX_FILE_SUFFIX = ".index";
+    public static final String INDEX_FILE_SUFFIX = ".index";
 
     /**
      * a file that is scheduled to be deleted
      */
-    public static String DELETED_FILE_SUFFIX = ".deleted";
+    public static final String DELETED_FILE_SUFFIX = ".deleted";
 
     /**
      * A temporary file that is being used for log cleaning
      */
-    public static String CLEANED_FILE_SUFFIX = ".cleaned";
+    public static final String CLEANED_FILE_SUFFIX = ".cleaned";
 
     /**
      * A temporary file used when swapping files into the log
      */
-    public static String SWAP_FILE_SUFFIX = ".swap";
+    public static final String SWAP_FILE_SUFFIX = ".swap";
 
     /** Clean shutdown file that indicates the broker was cleanly shutdown in 0.8. This is required to maintain backwards compatibility
      * with 0.8 and avoid unnecessary log recovery when upgrading from 0.8 to 0.8.1 */
     /**
      * TODO: Get rid of CleanShutdownFile in 0.8.2
      */
-    public static String CLEAN_SHUTDOWN_FILE = ".kafka_cleanshutdown";
+    public static final String CLEAN_SHUTDOWN_FILE = ".kafka_cleanshutdown";
 
     /**
      * Make log segment file name from offset bytes. All this does is pad out the offset number with zeros

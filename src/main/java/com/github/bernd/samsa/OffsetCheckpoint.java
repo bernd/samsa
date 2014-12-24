@@ -1,13 +1,15 @@
 package com.github.bernd.samsa;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +36,7 @@ public class OffsetCheckpoint {
             final File temp = new File(file.getAbsolutePath() + ".tmp");
 
             final FileOutputStream fileOutputStream = new FileOutputStream(temp);
-            final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
+            final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileOutputStream, Charsets.UTF_8));
             try {
                 // write the current version
                 writer.write(String.valueOf(0));
@@ -73,7 +75,8 @@ public class OffsetCheckpoint {
 
     public Map<TopicAndPartition, Long> read() throws IOException {
         synchronized (lock) {
-            final BufferedReader reader = new BufferedReader(new FileReader(file));
+            final FileInputStream fileInputStream = new FileInputStream(file);
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, Charsets.UTF_8));
             try {
                 String line = reader.readLine();
                 if (line == null) {

@@ -8,6 +8,8 @@ import java.util.Random;
  * Configuration settings for a log
  */
 public class LogConfig {
+    private static final Random RANDOM = new Random();
+
     private final int segmentSize;
     private final long segmentMs;
     private final long segmentJitterMs;
@@ -24,7 +26,6 @@ public class LogConfig {
     private final boolean compact;
     private final boolean uncleanLeaderElectionEnable;
     private final int minInSyncReplicas;
-    private long randomSegmentJitter;
 
     public static class Defaults {
         public static final int SEGMENT_SIZE = 1024 * 1024;
@@ -147,7 +148,7 @@ public class LogConfig {
         if (segmentJitterMs == 0) {
             return 0;
         } else {
-            return Utils.abs(new Random().nextInt()) % Math.min(segmentJitterMs, segmentMs);
+            return Utils.abs(RANDOM.nextInt()) % Math.min(segmentJitterMs, segmentMs);
         }
     }
 }
