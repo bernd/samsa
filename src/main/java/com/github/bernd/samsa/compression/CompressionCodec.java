@@ -1,20 +1,22 @@
 package com.github.bernd.samsa.compression;
 
 public enum CompressionCodec {
-    NONE(0), GZIP(1), SNAPPY(2), LZ4(3);
+    NONE(0, "none"), GZIP(1, "gzip"), SNAPPY(2, "snappy"), LZ4(3, "lz4");
 
-    private final int value;
+    public final int codec;
+    public final String name;
 
-    CompressionCodec(final int value) {
-        this.value = value;
+    CompressionCodec(final int codec, final String name) {
+        this.codec = codec;
+        this.name = name;
     }
 
-    public int getValue() {
-        return value;
+    public int getCodec() {
+        return codec;
     }
 
-    public static CompressionCodec fromValue(int value) {
-        switch (value) {
+    public static CompressionCodec fromCodec(int codec) {
+        switch (codec) {
             case 0:
                 return NONE;
             case 1:
@@ -26,6 +28,30 @@ public enum CompressionCodec {
             default:
                 throw new InvalidCompressionCodec();
         }
+    }
+
+    private static CompressionCodec fromName(String codec) {
+        switch (codec.toLowerCase()) {
+            case "none":
+                return NONE;
+            case "gzip":
+                return GZIP;
+            case "snappy":
+                return SNAPPY;
+            case "lz4":
+                return LZ4;
+            default:
+                throw new InvalidCompressionCodec();
+        }
+    }
+
+
+    public static CompressionCodec getCompressionCodec(final int codec) {
+        return fromCodec(codec);
+    }
+
+    public static CompressionCodec getCompressionCodec(final String codec) {
+        return fromName(codec);
     }
 
     private static class InvalidCompressionCodec extends RuntimeException {

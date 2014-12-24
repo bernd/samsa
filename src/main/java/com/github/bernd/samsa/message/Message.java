@@ -106,8 +106,8 @@ public class Message {
 
         byte attributes = 0;
 
-        if (compressionCodec.getValue() > 0) {
-            attributes = (byte) (attributes | (COMPRESSION_CODEC_MASK & compressionCodec.getValue()));
+        if (compressionCodec.getCodec() > 0) {
+            attributes = (byte) (attributes | (COMPRESSION_CODEC_MASK & compressionCodec.getCodec()));
         }
         buffer.put(attributes);
 
@@ -249,7 +249,7 @@ public class Message {
      * The compression codec used with this message
      */
     public CompressionCodec compressionCodec() {
-        return CompressionCodec.fromValue(buffer.get(ATTRIBUTES_OFFSET) & COMPRESSION_CODEC_MASK);
+        return CompressionCodec.fromCodec(buffer.get(ATTRIBUTES_OFFSET) & COMPRESSION_CODEC_MASK);
     }
 
     /**
