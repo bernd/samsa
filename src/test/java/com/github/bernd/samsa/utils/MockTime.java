@@ -35,17 +35,9 @@ public class MockTime implements Time {
     }
 
     @Override
-    public void sleep(long ms) throws InterruptedException {
+    public void sleep(long ms) {
         currentMS += ms;
         scheduler.tick();
-    }
-
-    @Override
-    public void sleepUninterruptibly(long ms) {
-        try {
-            sleep(ms);
-        } catch (InterruptedException e) {
-        }
     }
 
     @Override

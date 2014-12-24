@@ -1,7 +1,7 @@
 package com.github.bernd.samsa.utils;
 
 /**
- * A mockable interface for time functions
+ * An interface abstracting the clock to use in unit testing classes that make use of clock time
  */
 public interface Time {
     public static final long NS_PER_US = 1000;
@@ -17,11 +17,18 @@ public interface Time {
     public static final long SECS_PER_DAY = SECS_PER_HOUR * HOURS_PER_DAY;
     public static final long MINS_PER_DAY = MINS_PER_HOUR * HOURS_PER_DAY;
 
+    /**
+     * The current time in milliseconds
+     */
     public long milliseconds();
 
+    /**
+     * The current time in nanoseconds
+     */
     public long nanoseconds();
 
-    public void sleep(long ms) throws InterruptedException;
-
-    public void sleepUninterruptibly(long ms);
+    /**
+     * Sleep for the given number of milliseconds
+     */
+    public void sleep(long ms);
 }

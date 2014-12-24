@@ -84,7 +84,7 @@ public class Throttler {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace(String.format("Natural rate is %f per second but desired rate is %f, sleeping for %d ms to compensate.", rateInSecs, desiredRatePerSec, sleepTime));
                         }
-                        time.sleepUninterruptibly(sleepTime);
+                        time.sleep(sleepTime);
                     }
                 }
                 periodStartNs = now;
