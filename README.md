@@ -59,6 +59,13 @@ This runs the unit tests.
 $ mvn clean test
 ```
 
+### Log Stress Test
+
+```shell
+$ mvn exec:java -Dexec.mainClass="com.github.bernd.samsa.executable.StressTestLog" \
+       -Dexec.classpathScope="test"
+```
+
 ### Linear Write Speed Test
 
 The following commands write 5GB of data in 50KB chunks.
