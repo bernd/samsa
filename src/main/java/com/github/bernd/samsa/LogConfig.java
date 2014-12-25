@@ -47,7 +47,7 @@ public class LogConfig {
     }
 
     public LogConfig(final int segmentSize,
-                     final long SegmentMs,
+                     final long segmentMs,
                      final long segmentJitterMs,
                      final long flushInterval,
                      final long flushMs,
@@ -63,7 +63,7 @@ public class LogConfig {
                      final boolean uncleanLeaderElectionEnable,
                      final int minInSyncReplicas) {
         this.segmentSize = segmentSize;
-        this.segmentMs = SegmentMs;
+        this.segmentMs = segmentMs;
         this.segmentJitterMs = segmentJitterMs;
         this.flushInterval = flushInterval;
         this.flushMs = flushMs;

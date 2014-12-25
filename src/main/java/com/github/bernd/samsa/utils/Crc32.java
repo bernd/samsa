@@ -89,7 +89,7 @@ public class Crc32 implements Checksum {
     }
 
     @Override
-    final public void update(int b) {
+    public final void update(int b) {
         crc = (crc >>> 8) ^ T[T8_0_start + ((crc ^ b) & 0xff)];
     }
 

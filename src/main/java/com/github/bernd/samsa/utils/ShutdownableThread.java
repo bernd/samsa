@@ -54,7 +54,7 @@ public abstract class ShutdownableThread extends Thread {
         LOG.info("Shutdown completed");
     }
 
-    abstract public void doWork() throws SamsaStorageException, IOException, OffsetMapException;
+    public abstract void doWork() throws SamsaStorageException, IOException, OffsetMapException;
 
     @Override
     public void run() {

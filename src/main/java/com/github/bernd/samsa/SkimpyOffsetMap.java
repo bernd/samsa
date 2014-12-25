@@ -127,8 +127,9 @@ public class SkimpyOffsetMap implements OffsetMap {
         do {
             pos = positionOf(hash1, attempt);
             bytes.position(pos);
-            if (isEmpty(pos))
+            if (isEmpty(pos)) {
                 return -1L;
+            }
             bytes.get(hash2);
             attempt += 1;
         } while (!Arrays.equals(hash1, hash2));
