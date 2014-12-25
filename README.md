@@ -30,21 +30,20 @@ public class WriteReadTest {
     private static final Logger LOG = LoggerFactory.getLogger(WriteReadTest.class);
 
     public static void main(String[] args) throws Throwable {
+        final ArrayList<File> logDirs = Lists.newArrayList(new File("/tmp/samsa-test"));
+        final Map<String, LogConfig> topicConfigs = Maps.newHashMap();
+        final LogConfig logConfig = new LogConfigBuilder().build();
+        final CleanerConfig cleanerConfig = new CleanerConfigBuilder().build();
         final int ioThreads = 2;
         final long flushCheckMs = TimeUnit.SECONDS.toMillis(60);
         final long flushCheckpointMs = TimeUnit.SECONDS.toMillis(60);
         final long retentionCheckMs = TimeUnit.SECONDS.toDays(20);
+        final SamsaScheduler scheduler = new SamsaScheduler(2);
+        final BrokerState brokerState = new BrokerState();
+        final SystemTime time = new SystemTime();
 
-        final LogConfig logConfig = new LogConfigBuilder().build();
-
-        final LogManager logManager = new LogManager(Lists.newArrayList(new File("/tmp/samsa-test")),
-                new HashMap<String, LogConfig>(),
-                logConfig,
-                new CleanerConfigBuilder().build(),
-                ioThreads, flushCheckMs, flushCheckpointMs, retentionCheckMs,
-                new SamsaScheduler(2),
-                new BrokerState(),
-                new SystemTime());
+        final LogManager logManager = new LogManager(logDirs, topicConfigs, logConfig, cleanerConfig, ioThreads,
+                flushCheckMs, flushCheckpointMs, retentionCheckMs, scheduler, brokerState, time);
 
         final TopicAndPartition topicAndPartition = new TopicAndPartition("test", 0);
         final Optional<Log> logOptional = logManager.getLog(topicAndPartition);
@@ -71,6 +70,10 @@ public class WriteReadTest {
 
             LOG.info("Read message: \"{}\" (at {})", new String(Utils.readBytes(message.payload())), offset);
         }
+
+        log.flush();
+        log.close();
+        logManager.shutdown();
     }
 }
 ```
