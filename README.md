@@ -95,6 +95,10 @@ public class WriteReadTest {
 
 * Implement the LZ4 codec.
 
+### Metrics
+
+* Add back metrics to various classes.
+
 ### Dependencies
 
 * The current code makes heavy use of [Guava](https://github.com/google/guava)
