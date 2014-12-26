@@ -1,4 +1,4 @@
 package com.github.bernd.samsa.cleaner;
 
-public class LogCleaningAbortedException extends Throwable {
+public class LogCleaningAbortedException extends Exception {
 }

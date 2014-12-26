@@ -1,6 +1,6 @@
 package com.github.bernd.samsa;
 
-public class SamsaStorageException extends Throwable {
+public class SamsaStorageException extends Exception {
     public SamsaStorageException(String message) {
         super(message);
     }
