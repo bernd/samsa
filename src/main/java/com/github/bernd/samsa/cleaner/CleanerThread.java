@@ -27,7 +27,6 @@ public class CleanerThread extends ShutdownableThread {
     private static final Logger LOG = LoggerFactory.getLogger(CleanerThread.class);
 
     private final Cleaner cleaner;
-    private final Throttler throttler;
     private final CleanerConfig config;
     private final LogCleanerManager cleanerManager;
     private final AtomicBoolean isRunning;
@@ -36,16 +35,14 @@ public class CleanerThread extends ShutdownableThread {
 
     public CleanerThread(final int threadId,
                          final CleanerConfig config,
-                         final LogCleanerManager cleanerManager) throws NoSuchAlgorithmException {
+                         final LogCleanerManager cleanerManager,
+                         final Throttler throttler) throws NoSuchAlgorithmException {
         super("samsa-log-cleaner-thread-" + threadId, false);
         this.config = config;
         this.cleanerManager = cleanerManager;
         this.isRunning = getIsRunning();
 
         final Time time = new SystemTime();
-
-        this.throttler = new Throttler(config.getMaxIoBytesPerSecond(),
-                300, true, new SystemTime(), "cleaner-io", "bytes");
 
         if (config.getDedupeBufferSize() / config.getNumThreads() > Integer.MAX_VALUE) {
             LOG.warn("Cannot use more than 2G of cleaner buffer space per cleaner thread, ignoring excess buffer space...");

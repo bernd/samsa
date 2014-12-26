@@ -78,7 +78,7 @@ public class LogCleaner {
                 300, true, time, "cleaner-io", "bytes");
 
         for (int i = 0; i < config.getNumThreads(); i++) {
-            cleaners.add(new CleanerThread(i, config, cleanerManager));
+            cleaners.add(new CleanerThread(i, config, cleanerManager, throttler));
         }
     }
 
