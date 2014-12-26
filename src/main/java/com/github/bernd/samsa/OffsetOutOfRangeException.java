@@ -1,6 +1,7 @@
 package com.github.bernd.samsa;
 
 public class OffsetOutOfRangeException extends Throwable {
-    public OffsetOutOfRangeException(String format) {
+    public OffsetOutOfRangeException(String message) {
+        super(message);
     }
 }

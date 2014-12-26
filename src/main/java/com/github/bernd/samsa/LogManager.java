@@ -416,7 +416,7 @@ public class LogManager {
             // If the log does not exist, skip it
             if (log != null) {
                 //May need to abort and pause the cleaning of the log, and resume after truncation is done.
-                final boolean needToStopCleaner = (truncateOffset < log.activeSegment().getBaseOffset());
+                final boolean needToStopCleaner = truncateOffset < log.activeSegment().getBaseOffset();
                 if (needToStopCleaner && cleaner != null) {
                     cleaner.abortAndPauseCleaning(topicAndPartition);
                 }

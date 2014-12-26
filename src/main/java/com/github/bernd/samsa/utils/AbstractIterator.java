@@ -12,8 +12,6 @@ import java.util.NoSuchElementException;
  * @param <T> The type of thing we are iterating over
  */
 public abstract class AbstractIterator<T> implements Iterator<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractIterator.class);
-
     private enum State {
         DONE, READY, NOT_READY, FAILED
     }

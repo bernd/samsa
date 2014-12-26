@@ -64,7 +64,7 @@ public class SkimpyOffsetMap implements OffsetMap {
         /**
          * The maximum number of entries this map can contain
          */
-        this.slots = (memory / bytesPerEntry);
+        this.slots = memory / bytesPerEntry;
     }
 
     @Override

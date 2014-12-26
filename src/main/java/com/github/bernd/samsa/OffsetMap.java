@@ -3,15 +3,15 @@ package com.github.bernd.samsa;
 import java.nio.ByteBuffer;
 
 public interface OffsetMap {
-    public int getSlots();
+    int getSlots();
 
-    public void put(ByteBuffer key, long offset) throws OffsetMapException;
+    void put(ByteBuffer key, long offset) throws OffsetMapException;
 
-    public long get(ByteBuffer key) throws OffsetMapException;
+    long get(ByteBuffer key) throws OffsetMapException;
 
-    public void clear();
+    void clear();
 
-    public int getSize();
+    int getSize();
 
-    public double getUtilization();
+    double getUtilization();
 }

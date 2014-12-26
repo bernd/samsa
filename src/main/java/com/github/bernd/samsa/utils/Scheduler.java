@@ -12,13 +12,13 @@ public interface Scheduler {
     /**
      * Initialize this scheduler so it is ready to accept scheduling of tasks
      */
-    public void startup();
+    void startup();
 
     /**
      * Shutdown this scheduler. When this method is complete no more executions of background tasks will occur.
      * This includes tasks scheduled with a delayed execution.
      */
-    public void shutdown();
+    void shutdown();
 
     /**
      * Schedule a task
@@ -28,9 +28,9 @@ public interface Scheduler {
      * @param period The period with which to execute the task. If < 0 the task will execute only once.
      * @param unit   The unit for the preceding times.
      */
-    public void schedule(final String name,
-                         final Runnable runnable,
-                         final long delay,
-                         final long period,
-                         final TimeUnit unit);
+    void schedule(final String name,
+                  final Runnable runnable,
+                  final long delay,
+                  final long period,
+                  final TimeUnit unit);
 }
