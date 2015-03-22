@@ -115,6 +115,9 @@ is more common and also used by Kafka.
 
 * Remove unused methods, variables, etc.
 
+### Kafka Trunk Commits
+
+* 1cd6ed9 - KAFKA-1755; Reject compressed and unkeyed messages sent to compacted topics
 
 ## Running Tests
 
