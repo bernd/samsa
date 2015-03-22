@@ -9,7 +9,7 @@ log manager to pure Java.
 
 ## Status
 
-Based on Apache Kafka commit [8452187](https://github.com/apache/kafka/commit/8452187).
+Based on Apache Kafka commit [trunk/8452187](https://github.com/apache/kafka/commit/8452187).
 
 The first step is done: a transliteration of the Scala code to Java to get a
 working system as soon as possible. All tests pass!
@@ -105,6 +105,11 @@ public class WriteReadTest {
   for handling `Iterables`. Maybe that dependency can be removed by writing
   a helper class which implements those parts. (or extend the Iterable classes
   that are used)
+
+### Tests
+
+For some reason I switched to TestNG. Maybe switch back to JUnit because that
+is more common and also used by Kafka.
 
 ### Cleanup
 
