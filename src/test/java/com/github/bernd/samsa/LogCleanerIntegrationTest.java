@@ -2,6 +2,7 @@ package com.github.bernd.samsa;
 
 import com.github.bernd.samsa.cleaner.CleanerConfigBuilder;
 import com.github.bernd.samsa.cleaner.LogCleaner;
+import com.github.bernd.samsa.cleaner.LogCleanerManager;
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.github.bernd.samsa.message.InvalidMessageSizeException;
 import com.github.bernd.samsa.message.MessageAndOffset;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -83,6 +85,17 @@ public class LogCleanerIntegrationTest {
         cleaner.awaitCleaned("log", 0, lastCleaned2, 30000L);
         final Map<Integer, Integer> read2 = readFromLog(log);
         assertEquals(read2, appends2, "Contents of the map shouldn't change.");
+
+        // simulate deleting a partition, by removing it from logs
+        // force a checkpoint
+        // and make sure its gone from checkpoint file
+        cleaner.getLogs().remove(topics.get(0));
+
+        cleaner.updateCheckpoints(logDir);
+        final Map<TopicAndPartition, Long> checkpoints = new OffsetCheckpoint(new File(logDir, LogCleanerManager.OFFSET_CHECKPOINT_FILE)).read();
+
+        // we expect partition 0 to be gone
+        assertFalse(checkpoints.containsKey(topics.get(0)));
     }
 
     private Map<Integer, Integer> readFromLog(final Log log) throws UnsupportedEncodingException {

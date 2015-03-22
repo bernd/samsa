@@ -115,6 +115,13 @@ public class LogCleaner {
     }
 
     /**
+     * Update checkpoint file, removing topics and partitions that no longer exist
+     */
+    public void updateCheckpoints(final File dataDir) throws IOException {
+        cleanerManager.updateCheckpoints(dataDir);
+    }
+
+    /**
      * Abort the cleaning of a particular partition if it's in progress, and pause any future cleaning of this partition.
      * This call blocks until the cleaning of the partition is aborted and paused.
      */

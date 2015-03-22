@@ -9,6 +9,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -37,6 +39,8 @@ public class LogCleanerManager {
         LOG_CLEANING_IN_PROGRESS, LOG_CLEANING_ABORTED, LOG_CLEANING_PAUSED
     }
 
+    public static final String OFFSET_CHECKPOINT_FILE = "cleaner-offset-checkpoint";
+
     /* the offset checkpoints holding the last cleaned point for each log */
     private final Map<File, OffsetCheckpoint> checkpoints = Maps.newHashMap();
 
@@ -57,7 +61,7 @@ public class LogCleanerManager {
         this.logs = logs;
 
         for (final File dir : logDirs) {
-            checkpoints.put(dir, new OffsetCheckpoint(new File(dir, "cleaner-offset-checkpoint")));
+            checkpoints.put(dir, new OffsetCheckpoint(new File(dir, OFFSET_CHECKPOINT_FILE)));
         }
 
         this.pausedCleaningCond = lock.newCondition();
@@ -255,6 +259,33 @@ public class LogCleanerManager {
         }
     }
 
+    public void updateCheckpoints(final File dataDir) throws IOException {
+        updateCheckpoints(dataDir, Optional.<Pair<TopicAndPartition, Long>>absent());
+    }
+
+    public void updateCheckpoints(final File dataDir, final Optional<Pair<TopicAndPartition, Long>> update) throws IOException {
+        lock.lock();
+        try {
+            final OffsetCheckpoint checkpoint = checkpoints.get(dataDir);
+            final Set<TopicAndPartition> keys = logs.keySet();
+
+            final Map<TopicAndPartition, Long> filtered = Maps.filterEntries(checkpoint.read(), new Predicate<Map.Entry<TopicAndPartition, Long>>() {
+                @Override
+                public boolean apply(Map.Entry<TopicAndPartition, Long> entry) {
+                    return keys.contains(entry.getKey());
+                }
+            });
+
+            if (update.isPresent()) {
+                filtered.put(update.get().getKey(), update.get().getValue());
+            }
+
+            checkpoint.write(filtered);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     /**
      * Save out the endOffset and remove the given log from the in-progress set, if not aborted.
      */
@@ -265,10 +296,7 @@ public class LogCleanerManager {
 
             switch (state) {
                 case LOG_CLEANING_IN_PROGRESS:
-                    final OffsetCheckpoint checkpoint = checkpoints.get(dataDir);
-                    final Map<TopicAndPartition, Long> offsets = checkpoint.read();
-                    offsets.put(topicAndPartition, endOffset);
-                    checkpoint.write(offsets);
+                    updateCheckpoints(dataDir, Optional.of(Pair.of(topicAndPartition, endOffset)));
                     inProgress.remove(topicAndPartition);
                     break;
                 case LOG_CLEANING_ABORTED:

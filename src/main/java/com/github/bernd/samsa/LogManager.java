@@ -519,7 +519,7 @@ public class LogManager {
     /**
      * Delete a log.
      */
-    public void deleteLog(final TopicAndPartition topicAndPartition) throws SamsaStorageException, InterruptedException {
+    public void deleteLog(final TopicAndPartition topicAndPartition) throws SamsaStorageException, InterruptedException, IOException {
         Log removedLog = null;
         synchronized (logCreationOrDeletionLock) {
             removedLog = logs.remove(topicAndPartition);
@@ -528,6 +528,7 @@ public class LogManager {
             //We need to wait until there is no more cleaning task on the log to be deleted before actually deleting it.
             if (cleaner != null) {
                 cleaner.abortCleaning(topicAndPartition);
+                cleaner.updateCheckpoints(removedLog.getDir().getParentFile());
             }
             removedLog.delete();
             LOG.info(String.format("Deleted log for partition [%s,%d] in %s.",
