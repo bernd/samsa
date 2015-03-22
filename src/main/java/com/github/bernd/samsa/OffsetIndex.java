@@ -105,7 +105,7 @@ public class OffsetIndex {
             }
             return idx;
         } finally {
-            // Used to be thi in Kafka: Utils.swallow(raf.close());
+            // Used to be this in Kafka: Utils.swallow(raf.close());
             try {
                 raf.close();
             } catch (Exception e) {
@@ -389,6 +389,14 @@ public class OffsetIndex {
      */
     public boolean delete() {
         LOG.info("Deleting index {}", file.getAbsolutePath());
+        if (Os.isWindows()) {
+            // Used to be this in Kafka: Utils.swallow(forceUnmap(this.mmap))
+            try {
+                forceUnmap(mmap);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
         return file.delete();
     }
 
