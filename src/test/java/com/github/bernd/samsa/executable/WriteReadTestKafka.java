@@ -1,16 +1,14 @@
 package com.github.bernd.samsa.executable;
 
 
-import com.github.bernd.samsa.compression.CompressionCodec;
+import com.github.bernd.samsa.utils.Utils;
 import com.github.joschi.jadconfig.util.Size;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.Uninterruptibles;
 import kafka.common.TopicAndPartition;
-import kafka.log.CleanerConfig;
-import kafka.log.Log;
-import kafka.log.LogConfig;
-import kafka.log.LogManager;
+import kafka.log.*;
 import kafka.message.ByteBufferMessageSet;
 import kafka.message.Message;
 import kafka.message.MessageAndOffset;
@@ -24,16 +22,15 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
+import scala.collection.Iterator;
 import scala.collection.JavaConversions;
 import scala.collection.Map$;
-
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.joschi.jadconfig.util.Size.megabytes;
-import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
 import static java.util.concurrent.TimeUnit.*;
 
 public class WriteReadTestKafka {
@@ -136,19 +133,35 @@ public class WriteReadTestKafka {
 
         LOG.info("Initialized log at {}", logDirs.toArray(new File[logDirs.size()]));
 
-        final Log.LogAppendInfo info = log.append(new ByteBufferMessageSet(JavaConversions.asScalaBuffer(Lists.newArrayList(new Message("hello world".getBytes())))),true);
+        final Log.LogAppendInfo info = log.append(new ByteBufferMessageSet(JavaConversions.asScalaBuffer(Lists.newArrayList(new Message("hello world".getBytes())))), true);
 
-        LOG.info("Wrote message firstOffset={} lastOffset={} validBytes={}", info.firstOffset(), info.lastOffset(), info.validBytes());
-//
-//        final FetchDataInfo fetchDataInfo = log.read(info.lastOffset, info.validBytes);
-//        final MessageSet messageSet = fetchDataInfo.getMessageSet();
+        //LOG.info("Wrote message firstOffset={} lastOffset={} validBytes={}", info.firstOffset(), info.lastOffset(), info.validBytes());
 
-//        for (final MessageAndOffset messageAndOffset : messageSet) {
-//            final Message message = messageAndOffset.getMessage();
-//            final long offset = messageAndOffset.getOffset();
-//
-//            LOG.info("Read message: \"{}\" (at {})", new String(Utils.readBytes(message.payload())), offset);
-//        }
+
+        //read section
+
+
+        final Iterable<LogSegment> logSegments =
+                JavaConversions.asJavaIterable(log.logSegments());
+        final LogSegment segment = Iterables.getFirst(logSegments, null);
+        long logStartOffset = 0;
+
+        if (segment != null) {
+            logStartOffset = segment.baseOffset();
+        }
+
+
+        final FetchDataInfo fetchDataInfo = log.read(logStartOffset,  5 * 1024 * 1024, Option.<Object>apply(new Long(37)));
+        final MessageSet messageSet = fetchDataInfo.messageSet();
+
+        Iterator<MessageAndOffset> messageIterator = messageSet.iterator();
+
+        while (messageIterator.hasNext()) {
+            MessageAndOffset item = messageIterator.next();
+            final Message message = item.message();
+            final long offset = item.offset();
+            LOG.info("Read message: \"{}\" (at {})", new String(Utils.readBytes(message.payload())), offset);
+        }
 
         log.flush();
         log.close();
