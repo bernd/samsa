@@ -82,7 +82,7 @@ public class TestLinearWriteSpeed {
                 .ofType(String.class)
                 .defaultsTo(CompressionCodec.NONE.name());
         final OptionSpecBuilder mmapOpt = parser.accepts("mmap", "Do writes to memory-mapped files.");
-        final OptionSpecBuilder channelOpt = parser.accepts("channel", "Do writes to file channesl.");
+        final OptionSpecBuilder channelOpt = parser.accepts("channel", "Do writes to file channels.");
         final OptionSpecBuilder logOpt = parser.accepts("log", "Do writes to samsa logs.");
 
         final OptionSet options = parser.parse(args);
