@@ -19,8 +19,7 @@ public class CompressionFactory {
             case SNAPPY:
                 return new SnappyOutputStream(stream);
             case LZ4:
-                // TODO Implement KafkaLZ4BlockOutputStream
-                //return new KafkaLZ4BlockOutputStream(stream);
+                return new KafkaLZ4BlockOutputStream(stream);
             default:
                 throw new UnknownCodecException("Unknown Codec: " + compressionCodec);
         }
@@ -35,8 +34,7 @@ public class CompressionFactory {
             case SNAPPY:
                 return new SnappyInputStream(stream);
             case LZ4:
-                // TODO Implement KafkaLZ4BlockInputStream
-                //return new new KafkaLZ4BlockInputStream(stream);
+                return  new KafkaLZ4BlockInputStream(stream);
             default:
                 throw new UnknownCodecException("Unknown Codec: " + compressionCodec);
         }
