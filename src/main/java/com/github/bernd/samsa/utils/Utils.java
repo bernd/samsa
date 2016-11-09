@@ -3,11 +3,7 @@ package com.github.bernd.samsa.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -181,6 +177,37 @@ public class Utils {
             throw new IllegalArgumentException("requirement failed: " + message);
         }
     }
+
+    /**
+     * Write an unsigned integer in little-endian format to the {@link OutputStream}.
+     *
+     * @param out The stream to write to
+     * @param value The value to write
+     */
+    public static void writeUnsignedIntLE(OutputStream out, int value) throws IOException {
+        out.write(value >>> 8 * 0);
+        out.write(value >>> 8 * 1);
+        out.write(value >>> 8 * 2);
+        out.write(value >>> 8 * 3);
+    }
+
+    /**
+     * Write an unsigned integer in little-endian format to a byte array
+     * at a given offset.
+     *
+     * @param buffer The byte array to write to
+     * @param offset The position in buffer to write to
+     * @param value The value to write
+     */
+    public static void writeUnsignedIntLE(byte[] buffer, int offset, int value) {
+        buffer[offset++] = (byte) (value >>> 8 * 0);
+        buffer[offset++] = (byte) (value >>> 8 * 1);
+        buffer[offset++] = (byte) (value >>> 8 * 2);
+        buffer[offset]   = (byte) (value >>> 8 * 3);
+    }
+
+
+
 
     /**
      * Create a new thread

@@ -83,8 +83,8 @@ public class WriteReadTest {
 
 ### Compatibility Tests
 
-* Check if a log written by Kafka can be read by Samsa.
-* Check if a log written by Samsa can be read by Kafka.
+~~* Check if a log written by Kafka can be read by Samsa.~~
+~~* Check if a log written by Samsa can be read by Kafka.~~
 
 ### Exceptions
 
@@ -93,7 +93,7 @@ public class WriteReadTest {
 
 ### Compression
 
-* Implement the LZ4 codec.
+~~* Implement the LZ4 codec.~~
 
 ### Metrics
 

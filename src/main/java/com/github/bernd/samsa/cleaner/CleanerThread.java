@@ -92,6 +92,13 @@ public class CleanerThread extends ShutdownableThread {
         awaitShutdown();
     }
 
+    @Override
+    public void awaitShutdown()
+    {
+        Uninterruptibles.awaitUninterruptibly(backOffWaitLatch);
+        LOG.info("Shutdown completed");
+    }
+
     /**
      * Clean a log if there is a dirty log available, otherwise sleep for a bit
      */

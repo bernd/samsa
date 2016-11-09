@@ -18,12 +18,9 @@ public class MessageCompressionTest {
             codecs.add(CompressionCodec.SNAPPY);
         }
 
-        // TODO Implement LZ4 compression/decompression.
-        /*
         if(isLZ4Available()) {
             codecs.add(CompressionCodec.LZ4);
         }
-        */
 
         for (final CompressionCodec codec : codecs) {
             testSimpleCompressDecompress(codec);
