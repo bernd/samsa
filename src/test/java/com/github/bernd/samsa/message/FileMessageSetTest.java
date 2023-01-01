@@ -4,15 +4,15 @@ import com.github.bernd.samsa.OffsetPosition;
 import com.github.bernd.samsa.TestUtils;
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.google.common.collect.Lists;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileMessageSetTest extends BaseMessageSetTestCases {
     private FileMessageSet messageSet;
@@ -30,7 +30,7 @@ public class FileMessageSetTest extends BaseMessageSetTestCases {
         return createMessageSet(messages, CompressionCodec.NONE);
     }
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         messageSet = (FileMessageSet) createMessageSet(messages);
     }

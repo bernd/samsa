@@ -1,12 +1,12 @@
 package com.github.bernd.samsa.utils;
 
 import com.google.common.collect.Lists;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UtilsTest {
     @Test

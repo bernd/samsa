@@ -1,20 +1,20 @@
 package com.github.bernd.samsa.utils;
 
 import com.google.common.collect.Lists;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractIteratorTest {
     private AbstractIterator<Integer> iterator;
     private List<Integer> list;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         list = Lists.newArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 

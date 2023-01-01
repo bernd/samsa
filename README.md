@@ -106,11 +106,6 @@ public class WriteReadTest {
   a helper class which implements those parts. (or extend the Iterable classes
   that are used)
 
-### Tests
-
-For some reason I switched to TestNG. Maybe switch back to JUnit because that
-is more common and also used by Kafka.
-
 ### Cleanup
 
 * Remove unused methods, variables, etc.

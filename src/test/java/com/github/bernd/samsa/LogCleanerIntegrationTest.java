@@ -12,9 +12,9 @@ import com.github.bernd.samsa.utils.MockTime;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is an integration test that tests the fully integrated log cleaner
@@ -47,13 +45,13 @@ public class LogCleanerIntegrationTest {
 
     private LogCleaner cleaner;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         logDir = TestUtils.tempDir();
         logConfigBuilder = new LogConfigBuilder();
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown() throws Exception {
         if (cleaner != null) {
             cleaner.shutdown();

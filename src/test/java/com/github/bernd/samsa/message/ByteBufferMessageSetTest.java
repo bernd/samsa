@@ -1,14 +1,14 @@
 package com.github.bernd.samsa.message;
 
 import com.github.bernd.samsa.compression.CompressionCodec;
-import org.testng.annotations.BeforeMethod;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ByteBufferMessageSetTest extends BaseMessageSetTestCases {
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
 
     }

@@ -1,11 +1,11 @@
 package com.github.bernd.samsa;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OffsetMapTest {
     @Test

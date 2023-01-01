@@ -21,9 +21,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the log cleaning logic
@@ -48,7 +47,7 @@ public class CleanerTest {
     private File dir;
     private LogConfigBuilder logConfigBuilder;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         dir = TestUtils.tempDir();
         logConfigBuilder = new LogConfigBuilder().segmentSize(1024).maxIndexSize(1024).compact(true);
@@ -56,7 +55,7 @@ public class CleanerTest {
         throttler = new Throttler(Double.MAX_VALUE, Long.MAX_VALUE, true, time);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown() throws Exception {
         Utils.rm(dir);
     }
@@ -170,7 +169,7 @@ public class CleanerTest {
     /**
      * Test that abortion during cleaning throws a LogCleaningAbortedException
      */
-    @Test(expectedExceptions = LogCleaningAbortedException.class)
+    @Test
     public void testCleanSegmentsWithAbort() throws Exception, MessageSetSizeTooLargeException, SamsaStorageException, MessageSizeTooLargeException, InvalidMessageSizeException, OffsetMapException, LogCleaningAbortedException {
         final Cleaner cleaner = makeCleaner(Integer.MAX_VALUE, new CheckDoneCallback<TopicAndPartition>() {
             @Override
@@ -195,7 +194,8 @@ public class CleanerTest {
         final Iterator<LogSegment> iterator = log.logSegments().iterator();
         final List<LogSegment> logSegmentsToClean = Lists.newArrayList(iterator.next(), iterator.next(), iterator.next());
 
-        cleaner.cleanSegments(log, logSegmentsToClean, map, 0L);
+        assertThrows(LogCleaningAbortedException.class,
+                () -> cleaner.cleanSegments(log, logSegmentsToClean, map, 0L));
     }
 
     /**
