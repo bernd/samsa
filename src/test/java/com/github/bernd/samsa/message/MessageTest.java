@@ -4,17 +4,15 @@ import com.github.bernd.samsa.TestUtils;
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.github.bernd.samsa.utils.Utils;
 import com.google.common.collect.Lists;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MessageTest {
     public static class MessageTestVal {
@@ -49,7 +47,7 @@ public class MessageTest {
     private List<CompressionCodec> codecs;
     private List<MessageTestVal> messages;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         messages = Lists.newArrayList();
 

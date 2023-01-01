@@ -2,12 +2,12 @@ package com.github.bernd.samsa.message;
 
 import com.github.bernd.samsa.compression.CompressionCodec;
 import com.google.common.collect.Lists;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MessageCompressionTest {
     @Test

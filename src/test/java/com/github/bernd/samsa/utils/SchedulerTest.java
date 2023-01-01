@@ -1,15 +1,15 @@
 package com.github.bernd.samsa.utils;
 
 import com.github.bernd.samsa.TestUtils;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SchedulerTest {
     private Scheduler scheduler;
@@ -17,7 +17,7 @@ public class SchedulerTest {
     private AtomicInteger counter1;
     private AtomicInteger counter2;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         scheduler = new SamsaScheduler(1);
         mockTime = new MockTime();
@@ -27,7 +27,7 @@ public class SchedulerTest {
         scheduler.startup();
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown() throws Exception {
         scheduler.shutdown();
     }

@@ -9,9 +9,9 @@ import com.github.bernd.samsa.utils.Utils;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,9 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class LogManagerTest {
@@ -36,7 +34,7 @@ public class LogManagerTest {
     private String name = "samsa";
     private long veryLargeLogFlushInterval = 10000000L;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Throwable {
         time = new MockTime();
         logDir = TestUtils.tempDir();
@@ -45,7 +43,7 @@ public class LogManagerTest {
         logDir = logManager.getLogDirs().get(0);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown() throws Throwable {
         if (logManager != null) {
             logManager.shutdown();
@@ -207,9 +205,9 @@ public class LogManagerTest {
     /**
      * Test that it is not possible to open two log managers using the same data directory
      */
-    @Test(expectedExceptions = SamsaException.class)
+    @Test
     public void testTwoLogManagersUsingSameDirFails() throws Throwable {
-        createLogManager(Lists.newArrayList(logDir));
+        assertThrows(SamsaException.class, () -> createLogManager(Lists.newArrayList(logDir)));
         assertTrue(false, "Should not be able to create a second log manager instance with the same data directory");
     }
 

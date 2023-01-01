@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,18 +16,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.SortedMap;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OffsetIndexTest {
     private OffsetIndex idx;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         idx = new OffsetIndex(nonExistantTempFile(), 45L, 30 * 8);
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown() throws Exception {
         if (idx != null) {
             idx.getFile().delete();
@@ -111,10 +110,10 @@ public class OffsetIndexTest {
         assertWriteFails("Append should fail on a full index", idx, idx.getMaxEntries() + 1, IllegalArgumentException.class);
     }
 
-    @Test(expectedExceptions = InvalidOffsetException.class)
+    @Test
     public void appendOutOfOrder() throws Exception {
         idx.append(51, 0);
-        idx.append(50, 1);
+        assertThrows(InvalidOffsetException.class, () -> idx.append(50, 1));
     }
 
     @Test

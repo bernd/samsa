@@ -4,7 +4,7 @@ import com.github.bernd.samsa.compression.CompressionCodec;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.github.bernd.samsa.TestUtils.checkEquals;
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseMessageSetTestCases {
     final protected List<Message> messages = Lists.newArrayList(new Message("abcd".getBytes()), new Message("efgh".getBytes()), new Message("ijkl".getBytes()));

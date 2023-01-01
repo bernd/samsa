@@ -12,17 +12,15 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LogSegmentTest {
     private List<LogSegment> segments = Lists.newArrayList();
@@ -50,7 +48,7 @@ public class LogSegmentTest {
                 })));
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown() throws Exception {
         for (final LogSegment segment : segments) {
             segment.getIndex().delete();

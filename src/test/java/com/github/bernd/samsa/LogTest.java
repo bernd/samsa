@@ -15,9 +15,9 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,23 +26,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LogTest {
     private File logDir;
     private MockTime time;
     private LogConfigBuilder logConfigBuilder;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         logDir = TestUtils.tempDir();
         time = new MockTime(0);
         logConfigBuilder = new LogConfigBuilder();
     }
 
-    @AfterMethod
+    @AfterEach
     public void tearDown() throws Exception {
         Utils.rm(logDir);
     }
